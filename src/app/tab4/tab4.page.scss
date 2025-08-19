@@ -1,0 +1,81 @@
+.container {
+  padding: 16px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 16px;
+  
+  ion-badge {
+    font-size: 18px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+  }
+  
+  p {
+    margin: 0;
+    color: var(--ion-color-medium);
+    font-size: 12px;
+    line-height: 1.2;
+  }
+}
+
+ion-card {
+  margin-bottom: 16px;
+}
+
+ion-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  
+  ion-icon {
+    margin-right: 8px;
+  }
+}
+
+ion-item h3 {
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 16px;
+}
+
+ion-item p {
+  margin: 2px 0;
+  color: var(--ion-color-medium);
+  font-size: 14px;
+}
+
+ion-item[button] {
+  --background-hover: var(--ion-color-light);
+}
+
+ion-icon[slot="start"] {
+  color: var(--ion-color-primary);
+  margin-right: 8px;
+}
+
+ion-icon[slot="end"] {
+  color: var(--ion-color-medium);
+}
+
+ion-badge[color="success"] {
+  --background: var(--ion-color-success);
+  --color: white;
+}
+
+ion-badge[color="warning"] {
+  --background: var(--ion-color-warning);
+  --color: white;
+}
+
+ion-badge[color="danger"] {
+  --background: var(--ion-color-danger);
+  --color: white;
+}
+
+ion-badge[color="primary"] {
+  --background: var(--ion-color-primary);
+  --color: white;
+}

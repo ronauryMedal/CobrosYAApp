@@ -1,0 +1,89 @@
+<ion-content [fullscreen]="true" class="login-content">
+  <div class="login-container">
+    <!-- Logo y Título -->
+    <div class="logo-section">
+      <ion-icon name="card-outline" class="logo-icon"></ion-icon>
+      <h1>PagosYA</h1>
+      <p>Gestión de Adelantos</p>
+    </div>
+
+    <!-- Formulario de Login -->
+    <ion-card class="login-card">
+      <ion-card-content>
+        <h2>Iniciar Sesión</h2>
+        <p class="subtitle">Ingresa tus credenciales para continuar</p>
+
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
+          <!-- Cédula -->
+          <ion-item class="form-item">
+            <ion-label position="stacked">Cédula *</ion-label>
+            <ion-input 
+              formControlName="cedula" 
+              type="text" 
+              placeholder="000-0000000-0"
+              maxlength="13"
+              (ionInput)="formatearCedula($event)">
+            </ion-input>
+            <ion-note slot="error" *ngIf="loginForm.get('cedula')?.invalid && loginForm.get('cedula')?.touched">
+              La cédula es requerida
+            </ion-note>
+          </ion-item>
+
+          <!-- Contraseña -->
+          <ion-item class="form-item">
+            <ion-label position="stacked">Contraseña *</ion-label>
+            <ion-input 
+              formControlName="password" 
+              [type]="mostrarPassword ? 'text' : 'password'" 
+              placeholder="Ingresa tu contraseña">
+            </ion-input>
+            <ion-button 
+              fill="clear" 
+              slot="end" 
+              (click)="togglePassword()"
+              class="password-toggle">
+              <ion-icon [name]="mostrarPassword ? 'eye-off' : 'eye'"></ion-icon>
+            </ion-button>
+            <ion-note slot="error" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+              La contraseña es requerida
+            </ion-note>
+          </ion-item>
+
+          <!-- Recordar contraseña -->
+          <ion-item class="form-item">
+            <ion-checkbox formControlName="recordar"></ion-checkbox>
+            <ion-label>Recordar contraseña</ion-label>
+          </ion-item>
+
+          <!-- Botón de Login -->
+          <ion-button 
+            expand="block" 
+            type="submit" 
+            [disabled]="!loginForm.valid || isLoading"
+            class="login-button">
+            <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
+            <span *ngIf="!isLoading">Iniciar Sesión</span>
+          </ion-button>
+
+          <!-- Mensaje de error -->
+          <div class="error-message" *ngIf="errorMessage">
+            <ion-icon name="alert-circle"></ion-icon>
+            <span>{{ errorMessage }}</span>
+          </div>
+        </form>
+
+        <!-- Enlaces adicionales -->
+        <div class="login-links">
+          <ion-button fill="clear" size="small">
+            ¿Olvidaste tu contraseña?
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>&copy; 2024 PagosYA. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</ion-content>
