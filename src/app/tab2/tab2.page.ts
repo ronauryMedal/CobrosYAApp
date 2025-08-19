@@ -5,21 +5,18 @@ import {
   IonTitle, 
   IonContent, 
   IonCard, 
+  IonCardContent, 
   IonCardHeader, 
   IonCardTitle, 
-  IonCardContent, 
-  IonGrid, 
-  IonRow, 
-  IonCol, 
   IonList, 
   IonItem, 
   IonLabel, 
   IonBadge, 
-  IonButtons, 
+  IonIcon, 
   IonButton, 
-  IonIcon 
+  IonButtons 
 } from '@ionic/angular/standalone';
-import { ExploreContainerComponent } from '../explore-container/explore-container.component';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 @Component({
@@ -32,23 +29,59 @@ import { Router } from '@angular/router';
     IonTitle, 
     IonContent, 
     IonCard, 
+    IonCardContent, 
     IonCardHeader, 
     IonCardTitle, 
-    IonCardContent, 
-    IonGrid, 
-    IonRow, 
-    IonCol, 
     IonList, 
     IonItem, 
     IonLabel, 
     IonBadge, 
-    IonButtons, 
+    IonIcon, 
     IonButton, 
-    IonIcon,
-    ExploreContainerComponent
+    IonButtons,
+    CommonModule
   ],
 })
 export class Tab2Page {
+  adelantos = [
+    {
+      id: 1,
+      monto: 50000,
+      fecha: '2024-01-15',
+      estado: 'aprobado',
+      descripcion: 'Adelanto para gastos médicos',
+      meses: 6,
+      montoMensual: 8500
+    },
+    {
+      id: 2,
+      monto: 30000,
+      fecha: '2024-01-10',
+      estado: 'pendiente',
+      descripcion: 'Adelanto para reparación de vehículo',
+      meses: 4,
+      montoMensual: 7500
+    },
+    {
+      id: 3,
+      monto: 25000,
+      fecha: '2024-01-05',
+      estado: 'rechazado',
+      descripcion: 'Adelanto para estudios',
+      meses: 3,
+      montoMensual: 8500
+    },
+    {
+      id: 4,
+      monto: 75000,
+      fecha: '2024-01-01',
+      estado: 'aprobado',
+      descripcion: 'Adelanto para remodelación de casa',
+      meses: 12,
+      montoMensual: 6250
+    }
+  ];
+
   constructor(private router: Router) {}
 
   nuevoAdelanto() {
@@ -56,8 +89,16 @@ export class Tab2Page {
     this.router.navigate(['/solicitar-adelanto']);
   }
 
-  verDetalle(id: number) {
-    console.log('Ver detalle del adelanto:', id);
-    // Aquí se implementaría la navegación al detalle del adelanto
+  verDetalle(adelanto: any) {
+    console.log('Ver detalle del adelanto:', adelanto);
+  }
+
+  getEstadoColor(estado: string): string {
+    switch (estado) {
+      case 'aprobado': return 'success';
+      case 'pendiente': return 'warning';
+      case 'rechazado': return 'danger';
+      default: return 'medium';
+    }
   }
 }

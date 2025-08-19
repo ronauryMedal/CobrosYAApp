@@ -1,52 +1,55 @@
 import { Component, OnInit } from '@angular/core';
 import { 
-  IonHeader, 
-  IonToolbar, 
-  IonTitle, 
+  IonHeader,
+  IonToolbar,
+  IonTitle,
   IonContent, 
   IonCard, 
+  IonCardContent, 
   IonCardHeader, 
   IonCardTitle, 
-  IonCardContent, 
   IonList, 
   IonItem, 
   IonLabel, 
   IonIcon, 
   IonButton, 
-  IonAvatar, 
+  IonButtons, 
   IonGrid, 
   IonRow, 
   IonCol, 
-  IonBadge 
+  IonBadge,
+  IonAvatar,
+  IonNote
 } from '@ionic/angular/standalone';
-import { ExploreContainerComponent } from '../explore-container/explore-container.component';
-import { AuthService, User } from '../services/auth';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../services/auth';
+import { User } from '../services/api';
 
 @Component({
   selector: 'app-tab4',
   templateUrl: 'tab4.page.html',
   styleUrls: ['tab4.page.scss'],
   imports: [
-    IonHeader, 
-    IonToolbar, 
-    IonTitle, 
+    IonHeader,
+    IonToolbar,
+    IonTitle,
     IonContent, 
     IonCard, 
+    IonCardContent, 
     IonCardHeader, 
     IonCardTitle, 
-    IonCardContent, 
     IonList, 
     IonItem, 
     IonLabel, 
     IonIcon, 
     IonButton, 
-    IonAvatar, 
+    IonButtons, 
     IonGrid, 
     IonRow, 
     IonCol, 
     IonBadge,
-    ExploreContainerComponent,
+    IonAvatar,
+    IonNote,
     CommonModule
   ],
 })
@@ -61,22 +64,18 @@ export class Tab4Page implements OnInit {
 
   editarPerfil() {
     console.log('Editar perfil');
-    // Aquí se implementaría la navegación a la página de edición de perfil
   }
 
   cambiarPassword() {
     console.log('Cambiar contraseña');
-    // Aquí se implementaría la navegación a la página de cambio de contraseña
   }
 
   notificaciones() {
     console.log('Configurar notificaciones');
-    // Aquí se implementaría la navegación a la página de notificaciones
   }
 
   ayuda() {
-    console.log('Ayuda y soporte');
-    // Aquí se implementaría la navegación a la página de ayuda
+    console.log('Ayuda');
   }
 
   cerrarSesion() {

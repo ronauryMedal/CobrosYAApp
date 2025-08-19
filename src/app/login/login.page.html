@@ -25,7 +25,8 @@
               (ionInput)="formatearCedula($event)">
             </ion-input>
             <ion-note slot="error" *ngIf="loginForm.get('cedula')?.invalid && loginForm.get('cedula')?.touched">
-              La cédula es requerida
+              <span *ngIf="loginForm.get('cedula')?.errors?.['required']">La cédula es requerida</span>
+              <span *ngIf="loginForm.get('cedula')?.errors?.['minlength']">La cédula debe tener al menos 11 caracteres</span>
             </ion-note>
           </ion-item>
 
@@ -35,7 +36,8 @@
             <ion-input 
               formControlName="password" 
               [type]="mostrarPassword ? 'text' : 'password'" 
-              placeholder="Ingresa tu contraseña">
+              placeholder="Ingresa tu contraseña"
+              autocomplete="current-password">
             </ion-input>
             <ion-button 
               fill="clear" 
@@ -52,7 +54,7 @@
           <!-- Recordar contraseña -->
           <ion-item class="form-item">
             <ion-checkbox formControlName="recordar"></ion-checkbox>
-            <ion-label>Recordar contraseña</ion-label>
+            <ion-label>Recordar cédula</ion-label>
           </ion-item>
 
           <!-- Botón de Login -->

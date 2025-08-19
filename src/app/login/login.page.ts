@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { 
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent, 
   IonCard, 
   IonCardContent, 
@@ -18,16 +15,14 @@ import {
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService, User } from '../services/auth';
+import { AuthService } from '../services/auth';
+import { LoginRequest } from '../services/api';
 
 @Component({
   selector: 'app-login',
   templateUrl: 'login.page.html',
   styleUrls: ['login.page.scss'],
   imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent, 
     IonCard, 
     IonCardContent, 
@@ -106,66 +101,50 @@ export class LoginPage implements OnInit {
       console.log('Credenciales:', { cedula, password, recordar });
 
       try {
-        // Simular llamada a la API
-        console.log('Simulando login...');
-        const userData = await this.simularLogin(cedula, password);
-        console.log('Login exitoso:', userData);
-        
-        // Usar el servicio de autenticación
-        this.authService.login(userData);
-        console.log('Usuario guardado en AuthService');
-        
-        // Guardar datos del usuario si "recordar" está marcado
-        if (recordar) {
-          localStorage.setItem('recordarLogin', 'true');
-          localStorage.setItem('cedulaGuardada', cedula);
-        } else {
-          localStorage.removeItem('recordarLogin');
-          localStorage.removeItem('cedulaGuardada');
-        }
+        // Crear objeto de credenciales
+        const credentials: LoginRequest = {
+          cedula: cedula,
+          password: password
+        };
 
-        // Navegar al dashboard
-        console.log('Intentando navegar a /tabs...');
-        this.router.navigate(['/tabs']).then(() => {
-          console.log('Navegación exitosa');
-        }).catch((error) => {
-          console.error('Error en navegación:', error);
+        // Llamar al servicio de autenticación
+        console.log('Llamando a la API...');
+        this.authService.login(credentials).subscribe({
+          next: (response) => {
+            console.log('Login exitoso:', response);
+            
+            // Guardar cédula si "recordar" está marcado
+            if (recordar) {
+              localStorage.setItem('recordarLogin', 'true');
+              localStorage.setItem('cedulaGuardada', cedula);
+            } else {
+              localStorage.removeItem('recordarLogin');
+              localStorage.removeItem('cedulaGuardada');
+            }
+
+            // Navegar al dashboard
+            console.log('Intentando navegar a /tabs...');
+            this.router.navigate(['/tabs']).then(() => {
+              console.log('Navegación exitosa');
+            }).catch((error) => {
+              console.error('Error en navegación:', error);
+            });
+          },
+          error: (error) => {
+            console.error('Error en login:', error);
+            this.errorMessage = error.message || 'Error al iniciar sesión';
+            this.isLoading = false;
+          }
         });
         
       } catch (error: any) {
         console.error('Error en login:', error);
         this.errorMessage = error.message || 'Error al iniciar sesión';
-      } finally {
         this.isLoading = false;
       }
     } else {
       console.log('Formulario inválido:', this.loginForm.errors);
     }
-  }
-
-  private simularLogin(cedula: string, password: string): Promise<User> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log('Validando credenciales:', { cedula, password });
-        // Simular validación de credenciales
-        if (cedula === '001-9012345-6' && password === '123456') {
-          // Usuario válido
-          const userData: User = {
-            id: 11,
-            nombre: 'Laura Patricia Mendoza',
-            email: 'laura.mendoza@techcorp.com',
-            cedula: cedula,
-            empresa: 'TechCorp Solutions'
-          };
-          
-          console.log('Credenciales válidas, resolviendo...');
-          resolve(userData);
-        } else {
-          console.log('Credenciales inválidas, rechazando...');
-          reject(new Error('Cédula o contraseña incorrectos'));
-        }
-      }, 1500); // Simular delay de red
-    });
   }
 
   // Cargar cédula guardada si existe
