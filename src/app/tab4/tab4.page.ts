@@ -1,8 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { 
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent, 
   IonCard, 
   IonCardContent, 
@@ -11,28 +8,18 @@ import {
   IonList, 
   IonItem, 
   IonLabel, 
-  IonIcon, 
-  IonButton, 
-  IonButtons, 
-  IonGrid, 
-  IonRow, 
-  IonCol, 
-  IonBadge,
-  IonAvatar,
-  IonNote
+  IonIcon
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../services/auth';
 import { User } from '../services/api';
+import { AuthService } from '../services/auth';
+import { HeaderComponent } from '../components/header/header.component';
 
 @Component({
   selector: 'app-tab4',
   templateUrl: 'tab4.page.html',
   styleUrls: ['tab4.page.scss'],
   imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent, 
     IonCard, 
     IonCardContent, 
@@ -41,45 +28,35 @@ import { User } from '../services/api';
     IonList, 
     IonItem, 
     IonLabel, 
-    IonIcon, 
-    IonButton, 
-    IonButtons, 
-    IonGrid, 
-    IonRow, 
-    IonCol, 
-    IonBadge,
-    IonAvatar,
-    IonNote,
+    IonIcon,
+    HeaderComponent,
     CommonModule
   ],
 })
-export class Tab4Page implements OnInit {
+export class Tab4Page {
   currentUser: User | null = null;
 
-  constructor(private authService: AuthService) {}
-
-  ngOnInit() {
+  constructor(private authService: AuthService) {
     this.currentUser = this.authService.getCurrentUser();
   }
 
   editarPerfil() {
     console.log('Editar perfil');
+    // Aquí se implementaría la navegación a editar perfil
   }
 
-  cambiarPassword() {
+  cambiarContrasena() {
     console.log('Cambiar contraseña');
+    // Aquí se implementaría la navegación a cambiar contraseña
   }
 
-  notificaciones() {
-    console.log('Configurar notificaciones');
+  verNotificaciones() {
+    console.log('Ver notificaciones');
+    // Aquí se implementaría la navegación a notificaciones
   }
 
-  ayuda() {
-    console.log('Ayuda');
-  }
-
-  cerrarSesion() {
-    console.log('Cerrar sesión');
-    this.authService.logout();
+  verAyuda() {
+    console.log('Ver ayuda');
+    // Aquí se implementaría la navegación a ayuda
   }
 }

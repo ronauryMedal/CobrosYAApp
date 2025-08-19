@@ -1,8 +1,5 @@
 import { Component } from '@angular/core';
 import { 
-  IonHeader, 
-  IonToolbar, 
-  IonTitle, 
   IonContent, 
   IonCard, 
   IonCardContent, 
@@ -14,19 +11,19 @@ import {
   IonBadge, 
   IonIcon, 
   IonButton, 
-  IonButtons 
+  IonGrid,
+  IonRow,
+  IonCol
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { HeaderComponent } from '../components/header/header.component';
 
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
   imports: [
-    IonHeader, 
-    IonToolbar, 
-    IonTitle, 
     IonContent, 
     IonCard, 
     IonCardContent, 
@@ -38,7 +35,10 @@ import { Router } from '@angular/router';
     IonBadge, 
     IonIcon, 
     IonButton, 
-    IonButtons,
+    IonGrid,
+    IonRow,
+    IonCol,
+    HeaderComponent,
     CommonModule
   ],
 })
@@ -100,5 +100,28 @@ export class Tab2Page {
       case 'rechazado': return 'danger';
       default: return 'medium';
     }
+  }
+
+  // Métodos para calcular estadísticas
+  getAdelantosAprobados(): number {
+    return this.adelantos.filter(a => a.estado === 'aprobado').length;
+  }
+
+  getAdelantosPendientes(): number {
+    return this.adelantos.filter(a => a.estado === 'pendiente').length;
+  }
+
+  getTotalAprobado(): string {
+    const total = this.adelantos
+      .filter(a => a.estado === 'aprobado')
+      .reduce((sum, a) => sum + a.monto, 0);
+    return total.toLocaleString();
+  }
+
+  getTotalPendiente(): string {
+    const total = this.adelantos
+      .filter(a => a.estado === 'pendiente')
+      .reduce((sum, a) => sum + a.monto, 0);
+    return total.toLocaleString();
   }
 }

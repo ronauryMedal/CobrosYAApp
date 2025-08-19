@@ -1,0 +1,20 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <ion-icon *ngIf="title === 'Dashboard'" name="analytics-outline" slot="start"></ion-icon>
+      <ion-icon *ngIf="title === 'Adelantos'" name="card-outline" slot="start"></ion-icon>
+      <ion-icon *ngIf="title === 'Historial'" name="time-outline" slot="start"></ion-icon>
+      <ion-icon *ngIf="title === 'Perfil'" name="person-outline" slot="start"></ion-icon>
+      <ion-icon *ngIf="title === 'Solicitar Adelanto'" name="add-circle-outline" slot="start"></ion-icon>
+      {{ title }}
+    </ion-title>
+    <ion-buttons slot="end" *ngIf="showAvatar">
+      <ion-button (click)="presentActionSheet()" fill="clear">
+        <ion-avatar class="toolbar-avatar">
+          <img *ngIf="currentUser?.nombre" [src]="getAvatarUrl()" [alt]="currentUser?.nombre || 'Usuario'">
+          <ion-icon *ngIf="!currentUser?.nombre" name="person"></ion-icon>
+        </ion-avatar>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>

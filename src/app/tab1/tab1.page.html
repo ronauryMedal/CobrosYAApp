@@ -1,51 +1,97 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Dashboard
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header title="Dashboard"></app-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Dashboard</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 
-  <div class="container">
+  <!-- Estado de carga -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando dashboard...</p>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="errorMessage && !isLoading" class="error-container">
+    <ion-card color="danger">
+      <ion-card-content>
+        <ion-icon name="alert-circle" slot="start"></ion-icon>
+        <p>{{ errorMessage }}</p>
+        <ion-button fill="clear" (click)="cargarDashboard()">
+          Reintentar
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Pantalla de bienvenida cuando no hay datos o métricas vacías -->
+  <div *ngIf="!isLoading && !errorMessage && (!dashboardData || !tieneDatosValidos())" class="no-data-container">
+    <ion-card class="welcome-card">
+      <ion-card-content>
+        <div class="welcome-content">
+          <ion-icon name="happy-outline" class="welcome-icon"></ion-icon>
+          <h2>¡Bienvenido a PagosYA!</h2>
+          <p>Tu plataforma de adelantos de nómina</p>
+          <div class="features">
+            <div class="feature-item">
+              <ion-icon name="checkmark-circle" color="success"></ion-icon>
+              <span>Proceso rápido y sencillo</span>
+            </div>
+            <div class="feature-item">
+              <ion-icon name="checkmark-circle" color="success"></ion-icon>
+              <span>Sin papeleos complicados</span>
+            </div>
+            <div class="feature-item">
+              <ion-icon name="checkmark-circle" color="success"></ion-icon>
+              <span>Descuentos automáticos</span>
+            </div>
+          </div>
+          <ion-button expand="block" (click)="irASolicitarAdelanto()" class="start-button">
+            <ion-icon name="add-outline" slot="start"></ion-icon>
+            Comenzar mi primer adelanto
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Contenido del dashboard solo cuando hay datos válidos -->
+  <div *ngIf="!isLoading && !errorMessage && dashboardData && tieneDatosValidos()">
     <!-- Resumen de Adelantos -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Resumen de Adelantos</ion-card-title>
+        <ion-card-title>
+          <ion-icon name="card-outline" slot="start"></ion-icon>
+          Resumen de Adelantos
+        </ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-grid>
           <ion-row>
             <ion-col size="6">
               <div class="stat-item">
-                <h3>5</h3>
-                <p>Total Adelantos</p>
+                <h3>{{ dashboardData.resumen.adelantosPendientes || 0 }}</h3>
+                <p>Pendientes</p>
               </div>
             </ion-col>
             <ion-col size="6">
               <div class="stat-item">
-                <h3>1</h3>
-                <p>Pendientes</p>
+                <h3>{{ formatearMoneda(dashboardData.resumen.montoTotalAdelantos || 0) }}</h3>
+                <p>Total Adelantos</p>
               </div>
             </ion-col>
           </ion-row>
           <ion-row>
             <ion-col size="6">
               <div class="stat-item">
-                <h3>2</h3>
-                <p>Aprobados</p>
+                <h3>{{ formatearMoneda(dashboardData.resumen.montoDisponible || 0) }}</h3>
+                <p>Disponible</p>
               </div>
             </ion-col>
             <ion-col size="6">
               <div class="stat-item">
-                <h3>1</h3>
-                <p>Pagados</p>
+                <h3>{{ formatearMoneda(dashboardData.resumen.proximoPago || 0) }}</h3>
+                <p>Próximo Pago</p>
               </div>
             </ion-col>
           </ion-row>
@@ -53,72 +99,65 @@
       </ion-card-content>
     </ion-card>
 
-    <!-- Montos -->
+    <!-- Adelantos Recientes -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Montos</ion-card-title>
+        <ion-card-title>
+          <ion-icon name="time-outline" slot="start"></ion-icon>
+          Adelantos Recientes
+        </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-list>
-          <ion-item>
+        <ion-list *ngIf="dashboardData.adelantosRecientes && dashboardData.adelantosRecientes.length > 0">
+          <ion-item *ngFor="let adelanto of dashboardData.adelantosRecientes">
+            <ion-icon name="card-outline" slot="start"></ion-icon>
             <ion-label>
-              <h3>Total Solicitado</h3>
-              <p>RD$ 50,000</p>
+              <h3>{{ adelanto.descripcion }}</h3>
+              <p>{{ formatearFecha(adelanto.fecha) }} • {{ formatearMoneda(adelanto.monto) }}</p>
             </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>
-              <h3>Total Aprobado</h3>
-              <p>RD$ 40,000</p>
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>
-              <h3>Total Pagado</h3>
-              <p>RD$ 15,000</p>
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>
-              <h3>Monto Restante</h3>
-              <p>RD$ 25,000</p>
-            </ion-label>
+            <ion-badge slot="end" [color]="getEstadoColor(adelanto.estado)">
+              {{ adelanto.estado | titlecase }}
+            </ion-badge>
           </ion-item>
         </ion-list>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Adelanto Reciente -->
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Adelanto Reciente</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-item>
-          <ion-label>
-            <h3>RD$ 10,000</h3>
-            <p>Estado: Pendiente</p>
-            <p>Fecha: 20/01/2024</p>
-          </ion-label>
-          <ion-badge slot="end" color="warning">Pendiente</ion-badge>
-        </ion-item>
+        <div *ngIf="!dashboardData.adelantosRecientes || dashboardData.adelantosRecientes.length === 0" class="empty-state">
+          <ion-icon name="card-outline" class="empty-icon"></ion-icon>
+          <h3>¡Bienvenido a PagosYA!</h3>
+          <p>Aún no has solicitado ningún adelanto. ¿Necesitas ayuda financiera?</p>
+          <ion-button fill="outline" (click)="irASolicitarAdelanto()" class="action-button">
+            <ion-icon name="add-outline" slot="start"></ion-icon>
+            Solicitar mi primer adelanto
+          </ion-button>
+        </div>
       </ion-card-content>
     </ion-card>
 
     <!-- Últimos Pagos -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Últimos Pagos</ion-card-title>
+        <ion-card-title>
+          <ion-icon name="cash-outline" slot="start"></ion-icon>
+          Últimos Pagos
+        </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-item>
-          <ion-label>
-            <h3>RD$ 5,000</h3>
-            <p>Tipo: Parcial</p>
-            <p>Fecha: 15/01/2024</p>
-          </ion-label>
-          <ion-badge slot="end" color="success">Pagado</ion-badge>
-        </ion-item>
+        <ion-list *ngIf="dashboardData.ultimosPagos && dashboardData.ultimosPagos.length > 0">
+          <ion-item *ngFor="let pago of dashboardData.ultimosPagos">
+            <ion-icon name="cash-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h3>{{ pago.descripcion }}</h3>
+              <p>{{ formatearFecha(pago.fecha) }} • {{ formatearMoneda(pago.monto) }}</p>
+            </ion-label>
+            <ion-badge slot="end" [color]="getTipoColor(pago.tipo)">
+              {{ pago.tipo | titlecase }}
+            </ion-badge>
+          </ion-item>
+        </ion-list>
+        <div *ngIf="!dashboardData.ultimosPagos || dashboardData.ultimosPagos.length === 0" class="empty-state">
+          <ion-icon name="cash-outline" class="empty-icon"></ion-icon>
+          <h3>Sin actividad de pagos</h3>
+          <p>Cuando solicites adelantos, aquí verás el historial de tus pagos y descuentos.</p>
+        </div>
       </ion-card-content>
     </ion-card>
   </div>

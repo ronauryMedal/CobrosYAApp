@@ -1,8 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { 
-  IonHeader, 
-  IonToolbar, 
-  IonTitle, 
   IonContent, 
   IonCard, 
   IonCardContent, 
@@ -15,18 +12,22 @@ import {
   IonItem, 
   IonLabel, 
   IonBadge, 
-  IonIcon 
+  IonIcon,
+  IonSpinner,
+  IonRefresher,
+  IonRefresherContent,
+  IonButton
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { ApiService, DashboardData, AdelantoResumen, PagoResumen } from '../services/api';
+import { HeaderComponent } from '../components/header/header.component';
 
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
   imports: [
-    IonHeader, 
-    IonToolbar, 
-    IonTitle, 
     IonContent, 
     IonCard, 
     IonCardContent, 
@@ -40,67 +41,86 @@ import { CommonModule } from '@angular/common';
     IonLabel, 
     IonBadge, 
     IonIcon,
+    IonSpinner,
+    IonRefresher,
+    IonRefresherContent,
+    IonButton,
+    HeaderComponent,
     CommonModule
   ],
 })
-export class Tab1Page {
+export class Tab1Page implements OnInit {
+  isLoading = true;
+  errorMessage = '';
+  
   // Datos del dashboard
-  dashboardData = {
-    adelantosPendientes: 2,
-    montoTotalAdelantos: 150000,
-    montoDisponible: 50000,
-    proximoPago: 25000
-  };
+  dashboardData: DashboardData | null = null;
 
-  // Adelantos recientes
-  adelantosRecientes = [
-    {
-      id: 1,
-      monto: 50000,
-      fecha: '2024-01-15',
-      estado: 'aprobado',
-      descripcion: 'Adelanto para gastos médicos'
-    },
-    {
-      id: 2,
-      monto: 30000,
-      fecha: '2024-01-10',
-      estado: 'pendiente',
-      descripcion: 'Adelanto para reparación de vehículo'
-    },
-    {
-      id: 3,
-      monto: 25000,
-      fecha: '2024-01-05',
-      estado: 'rechazado',
-      descripcion: 'Adelanto para estudios'
-    }
-  ];
+  constructor(
+    private apiService: ApiService,
+    private router: Router
+  ) {}
 
-  // Últimos pagos
-  ultimosPagos = [
-    {
-      id: 1,
-      monto: 15000,
-      fecha: '2024-01-20',
-      tipo: 'descuento',
-      descripcion: 'Descuento mensual adelanto #1'
-    },
-    {
-      id: 2,
-      monto: 12000,
-      fecha: '2024-01-15',
-      tipo: 'pago',
-      descripcion: 'Pago adelanto #2'
-    },
-    {
-      id: 3,
-      monto: 8000,
-      fecha: '2024-01-10',
-      tipo: 'descuento',
-      descripcion: 'Descuento mensual adelanto #3'
-    }
-  ];
+  ngOnInit() {
+    this.cargarDashboard();
+  }
+
+  cargarDashboard() {
+    console.log('Cargando datos del dashboard...');
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.apiService.getDashboard().subscribe({
+      next: (response) => {
+        console.log('Dashboard cargado exitosamente:', response);
+        if (response.success) {
+          this.dashboardData = response.data;
+        } else {
+          this.errorMessage = response.message || 'Error al cargar el dashboard';
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar dashboard:', error);
+        this.errorMessage = error.message || 'Error al cargar el dashboard';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  // Método para recargar datos
+  doRefresh(event: any) {
+    this.cargarDashboard();
+    event.target.complete();
+  }
+
+  // Navegar a solicitar adelanto
+  irASolicitarAdelanto() {
+    this.router.navigate(['/solicitar-adelanto']);
+  }
+
+  // Verificar si hay datos válidos en el dashboard
+  tieneDatosValidos(): boolean {
+    if (!this.dashboardData) return false;
+    
+    // Verificar si hay adelantos recientes
+    const tieneAdelantos = this.dashboardData.adelantosRecientes && 
+                          this.dashboardData.adelantosRecientes.length > 0;
+    
+    // Verificar si hay pagos
+    const tienePagos = this.dashboardData.ultimosPagos && 
+                      this.dashboardData.ultimosPagos.length > 0;
+    
+    // Verificar si hay métricas válidas (no NaN o null)
+    const resumen = this.dashboardData.resumen;
+    const tieneMetricasValidas = resumen && 
+                                (resumen.adelantosPendientes > 0 || 
+                                 resumen.montoTotalAdelantos > 0 || 
+                                 resumen.montoDisponible > 0 || 
+                                 resumen.proximoPago > 0);
+    
+    return tieneAdelantos || tienePagos || tieneMetricasValidas;
+  }
 
   getEstadoColor(estado: string): string {
     switch (estado) {
@@ -117,5 +137,23 @@ export class Tab1Page {
       case 'descuento': return 'warning';
       default: return 'medium';
     }
+  }
+
+  // Formatear moneda
+  formatearMoneda(monto: number): string {
+    return new Intl.NumberFormat('es-DO', {
+      style: 'currency',
+      currency: 'DOP',
+      minimumFractionDigits: 0
+    }).format(monto);
+  }
+
+  // Formatear fecha
+  formatearFecha(fecha: string): string {
+    return new Date(fecha).toLocaleDateString('es-DO', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   }
 }

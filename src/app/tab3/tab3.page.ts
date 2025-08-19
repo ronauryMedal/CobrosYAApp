@@ -1,8 +1,5 @@
 import { Component } from '@angular/core';
 import { 
-  IonHeader, 
-  IonToolbar, 
-  IonTitle, 
   IonContent, 
   IonCard, 
   IonCardContent, 
@@ -12,20 +9,20 @@ import {
   IonItem, 
   IonLabel, 
   IonBadge, 
-  IonIcon, 
   IonSegment, 
-  IonSegmentButton 
+  IonSegmentButton, 
+  IonGrid,
+  IonRow,
+  IonCol
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
+import { HeaderComponent } from '../components/header/header.component';
 
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
   styleUrls: ['tab3.page.scss'],
   imports: [
-    IonHeader, 
-    IonToolbar, 
-    IonTitle, 
     IonContent, 
     IonCard, 
     IonCardContent, 
@@ -35,93 +32,82 @@ import { CommonModule } from '@angular/common';
     IonItem, 
     IonLabel, 
     IonBadge, 
-    IonIcon, 
     IonSegment, 
-    IonSegmentButton,
+    IonSegmentButton, 
+    IonGrid,
+    IonRow,
+    IonCol,
+    HeaderComponent,
     CommonModule
   ],
 })
 export class Tab3Page {
-  selectedSegment = 'adelantos';
+  segmentoSeleccionado = 'adelantos';
 
-  // Historial de adelantos
   historialAdelantos = [
     {
       id: 1,
+      descripcion: 'Adelanto para gastos médicos',
       monto: 50000,
       fecha: '2024-01-15',
-      estado: 'aprobado',
-      descripcion: 'Adelanto para gastos médicos',
-      meses: 6,
-      montoMensual: 8500
+      estado: 'aprobado'
     },
     {
       id: 2,
+      descripcion: 'Adelanto para reparación de vehículo',
       monto: 30000,
       fecha: '2024-01-10',
-      estado: 'pendiente',
-      descripcion: 'Adelanto para reparación de vehículo',
-      meses: 4,
-      montoMensual: 7500
+      estado: 'pendiente'
     },
     {
       id: 3,
+      descripcion: 'Adelanto para estudios',
       monto: 25000,
       fecha: '2024-01-05',
-      estado: 'rechazado',
-      descripcion: 'Adelanto para estudios',
-      meses: 3,
-      montoMensual: 8500
+      estado: 'rechazado'
     },
     {
       id: 4,
+      descripcion: 'Adelanto para remodelación de casa',
       monto: 75000,
       fecha: '2024-01-01',
-      estado: 'aprobado',
-      descripcion: 'Adelanto para remodelación de casa',
-      meses: 12,
-      montoMensual: 6250
+      estado: 'aprobado'
     }
   ];
 
-  // Historial de pagos
   historialPagos = [
     {
       id: 1,
-      monto: 15000,
-      fecha: '2024-01-20',
-      tipo: 'descuento',
-      descripcion: 'Descuento mensual adelanto #1',
-      adelantoId: 1
+      descripcion: 'Pago parcial - Gastos médicos',
+      monto: 8500,
+      fecha: '2024-02-15',
+      tipo: 'pago'
     },
     {
       id: 2,
-      monto: 12000,
-      fecha: '2024-01-15',
-      tipo: 'pago',
-      descripcion: 'Pago adelanto #2',
-      adelantoId: 2
+      descripcion: 'Descuento nómina - Gastos médicos',
+      monto: 8500,
+      fecha: '2024-02-01',
+      tipo: 'descuento'
     },
     {
       id: 3,
-      monto: 8000,
-      fecha: '2024-01-10',
-      tipo: 'descuento',
-      descripcion: 'Descuento mensual adelanto #3',
-      adelantoId: 3
+      descripcion: 'Pago parcial - Remodelación casa',
+      monto: 6250,
+      fecha: '2024-02-15',
+      tipo: 'pago'
     },
     {
       id: 4,
+      descripcion: 'Descuento nómina - Remodelación casa',
       monto: 6250,
-      fecha: '2024-01-05',
-      tipo: 'descuento',
-      descripcion: 'Descuento mensual adelanto #4',
-      adelantoId: 4
+      fecha: '2024-02-01',
+      tipo: 'descuento'
     }
   ];
 
   segmentChanged(event: any) {
-    this.selectedSegment = event.detail.value;
+    this.segmentoSeleccionado = event.detail.value;
   }
 
   getEstadoColor(estado: string): string {
@@ -139,5 +125,15 @@ export class Tab3Page {
       case 'descuento': return 'warning';
       default: return 'medium';
     }
+  }
+
+  getTotalAdelantos(): string {
+    const total = this.historialAdelantos.reduce((sum, adelanto) => sum + adelanto.monto, 0);
+    return total.toLocaleString();
+  }
+
+  getTotalPagos(): string {
+    const total = this.historialPagos.reduce((sum, pago) => sum + pago.monto, 0);
+    return total.toLocaleString();
   }
 }

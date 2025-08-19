@@ -44,6 +44,34 @@ export interface ApiResponse<T> {
   data: T;
 }
 
+// Interfaces para el Dashboard
+export interface DashboardData {
+  resumen: {
+    adelantosPendientes: number;
+    montoTotalAdelantos: number;
+    montoDisponible: number;
+    proximoPago: number;
+  };
+  adelantosRecientes: AdelantoResumen[];
+  ultimosPagos: PagoResumen[];
+}
+
+export interface AdelantoResumen {
+  id: number;
+  monto: number;
+  fecha: string;
+  estado: 'aprobado' | 'pendiente' | 'rechazado';
+  descripcion: string;
+}
+
+export interface PagoResumen {
+  id: number;
+  monto: number;
+  fecha: string;
+  tipo: 'pago' | 'descuento';
+  descripcion: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -94,9 +122,14 @@ export class ApiService {
   }
 
   // Métodos del dashboard
-  getDashboard(): Observable<ApiResponse<any>> {
-    return this.http.get<ApiResponse<any>>(`${this.baseUrl}/empleado/dashboard`, { headers: this.getHeaders() })
+  getDashboard(): Observable<ApiResponse<DashboardData>> {
+    console.log('Obteniendo datos del dashboard...');
+    return this.http.get<ApiResponse<DashboardData>>(`${this.baseUrl}/empleado/dashboard`, { headers: this.getHeaders() })
       .pipe(
+        map(response => {
+          console.log('Datos del dashboard recibidos:', response);
+          return response;
+        }),
         catchError(this.handleError)
       );
   }
