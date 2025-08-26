@@ -1,7 +1,27 @@
 <app-header title="Historial"></app-header>
 
 <ion-content [fullscreen]="true">
-  <div class="container">
+  <!-- Estado de carga -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando historial...</p>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="errorMessage && !isLoading" class="error-container">
+    <ion-card color="danger">
+      <ion-card-content>
+        <ion-icon name="alert-circle" slot="start"></ion-icon>
+        <p>{{ errorMessage }}</p>
+        <ion-button fill="clear" (click)="cargarHistorial()">
+          Reintentar
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Contenido principal -->
+  <div *ngIf="!isLoading && !errorMessage" class="container">
     <!-- Segment Control -->
     <ion-segment value="adelantos" (ionChange)="segmentChanged($event)">
       <ion-segment-button value="adelantos">
@@ -14,89 +34,186 @@
 
     <!-- Contenido de Adelantos -->
     <div *ngIf="segmentoSeleccionado === 'adelantos'">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>Historial de Adelantos</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-list>
-            <ion-item *ngFor="let adelanto of historialAdelantos" button>
-              <ion-label>
-                <h3>{{ adelanto.descripcion }}</h3>
-                <p>Monto: RD$ {{ adelanto.monto.toLocaleString() }}</p>
-                <p>Fecha: {{ adelanto.fecha }}</p>
-                <p>Estado: {{ adelanto.estado | titlecase }}</p>
-              </ion-label>
-              <ion-badge slot="end" [color]="getEstadoColor(adelanto.estado)">
-                {{ adelanto.estado | titlecase }}
-              </ion-badge>
-            </ion-item>
-          </ion-list>
-        </ion-card-content>
-      </ion-card>
+      <!-- Estado vacío para adelantos -->
+      <div *ngIf="!tieneAdelantos()" class="empty-state">
+        <div class="hero-section">
+          <div class="hero-icon">
+            <ion-icon name="time-outline"></ion-icon>
+          </div>
+          <h1 class="hero-title">Historial de Adelantos</h1>
+          <p class="hero-subtitle">Aquí verás el historial completo de tus solicitudes</p>
+        </div>
+
+        <div class="message-section">
+          <div class="message-card">
+            <div class="message-icon">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+            </div>
+            <div class="message-content">
+              <h3>¡Excelente!</h3>
+              <p>No tienes adelantos en tu historial. Esto significa que estás manejando bien tus finanzas o que aún no has solicitado ningún adelanto.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-section">
+          <p class="action-note">¿Necesitas ayuda financiera? Considera solicitar un adelanto cuando lo requieras.</p>
+        </div>
+      </div>
+
+      <!-- Contenido cuando hay adelantos -->
+      <div *ngIf="tieneAdelantos()">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Historial de Adelantos</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ion-item *ngFor="let adelanto of historialAdelantos" button>
+                <ion-label>
+                  <h3>{{ adelanto.motivo }}</h3>
+                  <p>Monto: {{ formatearMoneda(adelanto.monto_solicitado) }}</p>
+                  <p>Fecha: {{ formatearFecha(adelanto.fecha_solicitud) }}</p>
+                  <p>Estado: {{ adelanto.estado | titlecase }}</p>
+                </ion-label>
+                <ion-badge slot="end" [color]="getEstadoColor(adelanto.estado)">
+                  {{ adelanto.estado | titlecase }}
+                </ion-badge>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </div>
     </div>
 
     <!-- Contenido de Pagos -->
     <div *ngIf="segmentoSeleccionado === 'pagos'">
+      <!-- Estado vacío para adelantos pagados -->
+      <div *ngIf="getAdelantosPagados().length === 0" class="empty-state">
+        <div class="hero-section">
+          <div class="hero-icon">
+            <ion-icon name="cash-outline"></ion-icon>
+          </div>
+          <h1 class="hero-title">Adelantos Pagados</h1>
+          <p class="hero-subtitle">Aquí verás el historial de todos tus adelantos que han sido pagados</p>
+        </div>
+
+        <div class="message-section">
+          <div class="message-card">
+            <div class="message-icon">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+            </div>
+            <div class="message-content">
+              <h3>Sin Adelantos Pagados</h3>
+              <p>No tienes adelantos pagados en tu historial. Esto puede ser porque tus adelantos están pendientes, aprobados pero no pagados, o porque aún no has solicitado ningún adelanto.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-section">
+          <p class="action-note">Los adelantos aparecerán aquí una vez que hayan sido completamente pagados.</p>
+        </div>
+      </div>
+
+      <!-- Tabla de adelantos pagados -->
+      <div *ngIf="getAdelantosPagados().length > 0">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Adelantos Pagados</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <!-- Tabla de adelantos pagados -->
+            <div class="table-container">
+              <table class="historial-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Motivo</th>
+                    <th>Monto Solicitado</th>
+                    <th>Monto Pagado</th>
+                    <th>Fecha de Pago</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let adelanto of getAdelantosPagados()">
+                    <td>{{ adelanto.id }}</td>
+                    <td>{{ adelanto.motivo }}</td>
+                    <td>{{ formatearMoneda(adelanto.monto_solicitado) }}</td>
+                    <td>{{ formatearMoneda(adelanto.monto_total) }}</td>
+                    <td>{{ formatearFecha(adelanto.fecha_solicitud) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Resumen de adelantos pagados -->
+        <ion-card *ngIf="getAdelantosPagados().length > 0">
+          <ion-card-header>
+            <ion-card-title>Resumen de Adelantos Pagados</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-grid>
+              <ion-row>
+                <ion-col size="6">
+                  <div class="stat-item">
+                    <h3>{{ getAdelantosPagados().length }}</h3>
+                    <p>Adelantos Pagados</p>
+                  </div>
+                </ion-col>
+                <ion-col size="6">
+                  <div class="stat-item">
+                    <h3>{{ formatearMoneda(getTotalAdelantosPagados()) }}</h3>
+                    <p>Total Pagado</p>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
+    <!-- Resumen solo cuando hay datos -->
+    <div *ngIf="(tieneAdelantos() || tienePagos()) && !(segmentoSeleccionado === 'pagos' && getAdelantosPagados().length === 0)">
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Historial de Pagos</ion-card-title>
+          <ion-card-title>Resumen</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <ion-list>
-            <ion-item *ngFor="let pago of historialPagos" button>
-              <ion-label>
-                <h3>{{ pago.descripcion }}</h3>
-                <p>Monto: RD$ {{ pago.monto.toLocaleString() }}</p>
-                <p>Fecha: {{ pago.fecha }}</p>
-                <p>Tipo: {{ pago.tipo | titlecase }}</p>
-              </ion-label>
-              <ion-badge slot="end" [color]="getTipoColor(pago.tipo)">
-                {{ pago.tipo | titlecase }}
-              </ion-badge>
-            </ion-item>
-          </ion-list>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="6">
+                <div class="stat-item">
+                  <h3>{{ historialAdelantos.length }}</h3>
+                  <p>Total Adelantos</p>
+                </div>
+              </ion-col>
+              <ion-col size="6">
+                <div class="stat-item">
+                  <h3>{{ historialPagos.length }}</h3>
+                  <p>Total Pagos</p>
+                </div>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="6">
+                <div class="stat-item">
+                  <h3>{{ formatearMoneda(getTotalAdelantos()) }}</h3>
+                  <p>Monto Adelantos</p>
+                </div>
+              </ion-col>
+              <ion-col size="6">
+                <div class="stat-item">
+                  <h3>{{ formatearMoneda(getTotalPagos()) }}</h3>
+                  <p>Monto Pagos</p>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
         </ion-card-content>
       </ion-card>
     </div>
-
-    <!-- Resumen -->
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Resumen</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-grid>
-          <ion-row>
-            <ion-col size="6">
-              <div class="stat-item">
-                <h3>{{ historialAdelantos.length }}</h3>
-                <p>Total Adelantos</p>
-              </div>
-            </ion-col>
-            <ion-col size="6">
-              <div class="stat-item">
-                <h3>{{ historialPagos.length }}</h3>
-                <p>Total Pagos</p>
-              </div>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="6">
-              <div class="stat-item">
-                <h3>RD$ {{ getTotalAdelantos() }}</h3>
-                <p>Monto Adelantos</p>
-              </div>
-            </ion-col>
-            <ion-col size="6">
-              <div class="stat-item">
-                <h3>RD$ {{ getTotalPagos() }}</h3>
-                <p>Monto Pagos</p>
-              </div>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-card-content>
-    </ion-card>
   </div>
 </ion-content>

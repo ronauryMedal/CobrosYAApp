@@ -2,10 +2,153 @@
   padding: 16px;
 }
 
-ion-segment {
-  margin-bottom: 16px;
+// Estados de carga y error
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  text-align: center;
+  
+  ion-spinner {
+    margin-bottom: 16px;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    margin: 0;
+    font-size: 16px;
+  }
 }
 
+.error-container {
+  padding: 16px;
+  
+  ion-card {
+    margin: 0;
+  }
+  
+  ion-card-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    ion-icon {
+      font-size: 24px;
+      color: var(--ion-color-danger);
+    }
+    
+    p {
+      flex: 1;
+      margin: 0;
+    }
+  }
+}
+
+// Estado vacío elegante
+.empty-state {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 32px 16px;
+}
+
+// Sección hero
+.hero-section {
+  margin-bottom: 32px;
+  
+  .hero-icon {
+    margin-bottom: 20px;
+    
+    ion-icon {
+      font-size: 64px;
+      color: var(--ion-color-primary);
+      opacity: 0.8;
+    }
+  }
+  
+  .hero-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ion-color-dark);
+    margin: 0 0 12px 0;
+    line-height: 1.2;
+  }
+  
+  .hero-subtitle {
+    font-size: 16px;
+    color: var(--ion-color-medium);
+    margin: 0;
+    line-height: 1.4;
+  }
+}
+
+// Sección de mensaje
+.message-section {
+  margin-bottom: 32px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.message-card {
+  display: flex;
+  align-items: flex-start;
+  padding: 24px;
+  background: linear-gradient(135deg, var(--ion-color-light) 0%, var(--ion-color-light-shade) 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--ion-color-light-shade);
+  
+  .message-icon {
+    margin-right: 16px;
+    flex-shrink: 0;
+    margin-top: 4px;
+    
+    ion-icon {
+      font-size: 28px;
+      color: var(--ion-color-success);
+    }
+  }
+  
+  .message-content {
+    flex: 1;
+    text-align: left;
+    
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+      margin: 0 0 8px 0;
+    }
+    
+    p {
+      font-size: 14px;
+      color: var(--ion-color-medium);
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+}
+
+// Sección de acción
+.action-section {
+  width: 100%;
+  max-width: 400px;
+  
+  .action-note {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    margin: 0;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+}
+
+// Estilos para cuando hay datos
 .stat-item {
   text-align: center;
   padding: 16px;
@@ -26,6 +169,8 @@ ion-segment {
 
 ion-card {
   margin-bottom: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 ion-card-title {
@@ -42,4 +187,170 @@ ion-item p {
   margin: 2px 0;
   color: var(--ion-color-medium);
   font-size: 14px;
+}
+
+ion-item[button] {
+  --background-hover: var(--ion-color-light);
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+// Segment control styling
+ion-segment {
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background: var(--ion-color-light);
+}
+
+ion-segment-button {
+  --indicator-color: var(--ion-color-primary);
+  --color-checked: var(--ion-color-primary);
+  --color: var(--ion-color-medium);
+}
+
+// Responsive design
+@media (max-width: 576px) {
+  .empty-state {
+    padding: 24px 12px;
+    min-height: 60vh;
+  }
+  
+  .hero-title {
+    font-size: 24px;
+  }
+  
+  .hero-subtitle {
+    font-size: 14px;
+  }
+  
+  .message-card {
+    padding: 20px;
+    
+    .message-icon ion-icon {
+      font-size: 24px;
+    }
+    
+    .message-content h3 {
+      font-size: 16px;
+    }
+    
+    .message-content p {
+      font-size: 13px;
+    }
+  }
+  
+  .hero-icon ion-icon {
+    font-size: 56px;
+  }
+}
+
+// Estilos para la tabla de historial
+.table-container {
+  overflow-x: auto;
+  margin: 0 -16px;
+  padding: 0 16px;
+}
+
+.historial-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  th, td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 1px solid var(--ion-color-light-shade);
+  }
+  
+  th {
+    background: var(--ion-color-primary);
+    color: white;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  td {
+    font-size: 13px;
+    color: var(--ion-color-dark);
+  }
+  
+  tr:hover {
+    background: var(--ion-color-light);
+  }
+  
+  // Estilos para filas según estado
+  tr.estado-pendiente {
+    background: rgba(255, 193, 7, 0.05);
+    
+    &:hover {
+      background: rgba(255, 193, 7, 0.1);
+    }
+  }
+  
+  tr.estado-aprobado {
+    background: rgba(40, 167, 69, 0.05);
+    
+    &:hover {
+      background: rgba(40, 167, 69, 0.1);
+    }
+  }
+  
+  tr.estado-rechazado {
+    background: rgba(220, 53, 69, 0.05);
+    
+    &:hover {
+      background: rgba(220, 53, 69, 0.1);
+    }
+  }
+  
+  tr.estado-pagado {
+    background: rgba(56, 128, 255, 0.05);
+    
+    &:hover {
+      background: rgba(56, 128, 255, 0.1);
+    }
+  }
+}
+
+// Estilos para montos restantes
+.monto-restante {
+  color: var(--ion-color-warning);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.monto-completado {
+  color: var(--ion-color-success);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+// Responsive para tabla
+@media (max-width: 768px) {
+  .table-container {
+    margin: 0 -8px;
+    padding: 0 8px;
+  }
+  
+  .historial-table {
+    font-size: 12px;
+    
+    th, td {
+      padding: 8px 4px;
+    }
+    
+    th {
+      font-size: 10px;
+    }
+    
+    td {
+      font-size: 11px;
+    }
+  }
 }

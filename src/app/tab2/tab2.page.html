@@ -1,76 +1,145 @@
 <app-header title="Adelantos"></app-header>
 
 <ion-content [fullscreen]="true">
-  <div class="container">
-    <!-- Botón para solicitar nuevo adelanto -->
-    <ion-card>
+  <!-- Estado de carga -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando adelantos...</p>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="errorMessage && !isLoading" class="error-container">
+    <ion-card color="danger">
       <ion-card-content>
-        <ion-button expand="block" (click)="nuevoAdelanto()" class="nuevo-adelanto-btn">
-          <ion-icon name="add-outline" slot="start"></ion-icon>
-          Solicitar Nuevo Adelanto
+        <ion-icon name="alert-circle" slot="start"></ion-icon>
+        <p>{{ errorMessage }}</p>
+        <ion-button fill="clear" (click)="cargarAdelantos()">
+          Reintentar
         </ion-button>
       </ion-card-content>
     </ion-card>
+  </div>
 
-    <!-- Lista de adelantos -->
+  <!-- Contenido principal -->
+  <div *ngIf="!isLoading && !errorMessage" class="container">
+    <!-- Estado cuando no hay adelantos o todos están completados -->
+    <div *ngIf="!tieneAdelantos() || getAdelantosActivos().length === 0" class="empty-state">
+      <div class="hero-section">
+        <div class="hero-icon">
+          <ion-icon name="card-outline"></ion-icon>
+        </div>
+        <h1 class="hero-title">Adelantos de Nómina</h1>
+        <p class="hero-subtitle">Accede a tu dinero cuando lo necesites</p>
+      </div>
+
+      <div class="benefits-section">
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <ion-icon name="flash-outline"></ion-icon>
+          </div>
+          <div class="benefit-content">
+            <h3>Proceso Rápido</h3>
+            <p>Solicitud en minutos, respuesta en horas</p>
+          </div>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+          </div>
+          <div class="benefit-content">
+            <h3>100% Seguro</h3>
+            <p>Tu información está protegida</p>
+          </div>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <ion-icon name="calculator-outline"></ion-icon>
+          </div>
+          <div class="benefit-content">
+            <h3>Sin Sorpresas</h3>
+            <p>Intereses claros y descuentos automáticos</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-section">
+        <ion-button expand="block" (click)="nuevoAdelanto()" class="cta-button" *ngIf="puedeSolicitarAdelanto()">
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          {{ !tieneAdelantos() ? 'Solicitar mi Primer Adelanto' : 'Solicitar Nuevo Adelanto' }}
+        </ion-button>
+        <p class="action-note" *ngIf="puedeSolicitarAdelanto()">Sin papeleos • Sin garantías • Sin complicaciones</p>
+        <p class="action-note" *ngIf="!puedeSolicitarAdelanto()">Tienes adelantos activos. Completa los pagos pendientes para solicitar uno nuevo.</p>
+      </div>
+    </div>
+
+    <!-- Estado cuando hay adelantos activos -->
+    <div *ngIf="getAdelantosActivos().length > 0">
+      <!-- Lista de adelantos -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Mis Adelantos</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item *ngFor="let adelanto of getAdelantosActivos()" (click)="verDetalle(adelanto)" button [class]="'estado-' + adelanto.estado">
+                              <ion-label>
+                  <h3>{{ adelanto.motivo }}</h3>
+                  <p>Monto: {{ formatearMoneda(adelanto.monto_solicitado) }}</p>
+                  <p>Fecha: {{ formatearFecha(adelanto.fecha_solicitud) }}</p>
+                  <p>Meses: {{ adelanto.meses_pago }} | Mensual: {{ formatearMoneda(adelanto.monto_mensual) }}</p>
+                  <p>Interés: {{ formatearMoneda(adelanto.interes) }} | Total: {{ formatearMoneda(adelanto.monto_total) }}</p>
+                  <p *ngIf="adelanto.monto_restante > 0" class="monto-restante">
+                    Monto Restante: {{ formatearMoneda(adelanto.monto_restante) }}
+                  </p>
+                </ion-label>
+              <ion-badge slot="end" [color]="getEstadoColor(adelanto.estado)">
+                {{ adelanto.estado | titlecase }}
+              </ion-badge>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+
+          <!-- Resumen de adelantos activos -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Mis Adelantos</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-list>
-          <ion-item *ngFor="let adelanto of adelantos" (click)="verDetalle(adelanto)" button>
-            <ion-label>
-              <h3>{{ adelanto.descripcion }}</h3>
-              <p>Monto: RD$ {{ adelanto.monto.toLocaleString() }}</p>
-              <p>Fecha: {{ adelanto.fecha }}</p>
-              <p>Meses: {{ adelanto.meses }} | Mensual: RD$ {{ adelanto.montoMensual.toLocaleString() }}</p>
-            </ion-label>
-            <ion-badge slot="end" [color]="getEstadoColor(adelanto.estado)">
-              {{ adelanto.estado | titlecase }}
-            </ion-badge>
-          </ion-item>
-        </ion-list>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Resumen de adelantos -->
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Resumen</ion-card-title>
+        <ion-card-title>Resumen de Adelantos Activos</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-grid>
           <ion-row>
             <ion-col size="6">
               <div class="stat-item">
-                <h3>{{ getAdelantosAprobados() }}</h3>
-                <p>Aprobados</p>
+                <h3>{{ getAdelantosActivos().length }}</h3>
+                <p>Adelantos Activos</p>
               </div>
             </ion-col>
             <ion-col size="6">
               <div class="stat-item">
-                <h3>{{ getAdelantosPendientes() }}</h3>
-                <p>Pendientes</p>
+                <h3>{{ getAdelantosCompletados().length }}</h3>
+                <p>Completados</p>
               </div>
             </ion-col>
           </ion-row>
           <ion-row>
             <ion-col size="6">
               <div class="stat-item">
-                <h3>RD$ {{ getTotalAprobado() }}</h3>
-                <p>Total Aprobado</p>
+                <h3>{{ formatearMoneda(getTotalAdelantosActivos()) }}</h3>
+                <p>Total Activos</p>
               </div>
             </ion-col>
             <ion-col size="6">
               <div class="stat-item">
-                <h3>RD$ {{ getTotalPendiente() }}</h3>
-                <p>Total Pendiente</p>
+                <h3>{{ formatearMoneda(getTotalMontoRestante()) }}</h3>
+                <p>Monto Restante</p>
               </div>
             </ion-col>
           </ion-row>
         </ion-grid>
       </ion-card-content>
     </ion-card>
+    </div>
   </div>
 </ion-content>

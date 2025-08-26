@@ -17,9 +17,14 @@
       <ion-card-content>
         <ion-icon name="alert-circle" slot="start"></ion-icon>
         <p>{{ errorMessage }}</p>
-        <ion-button fill="clear" (click)="cargarDashboard()">
-          Reintentar
-        </ion-button>
+        <div class="error-actions">
+          <ion-button *ngIf="!errorMessage.includes('No autorizado')" fill="clear" (click)="cargarDashboard()">
+            Reintentar
+          </ion-button>
+          <ion-button *ngIf="errorMessage.includes('No autorizado')" fill="clear" (click)="irAlLogin()">
+            Ir al Login
+          </ion-button>
+        </div>
       </ion-card-content>
     </ion-card>
   </div>

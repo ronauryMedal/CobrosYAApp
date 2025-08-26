@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { ApiService, LoginRequest, User } from './api';
+import { ApiService, LoginRequest, User, LimitesAdelanto } from './api';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private limitesAdelantoSubject = new BehaviorSubject<LimitesAdelanto | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  public limitesAdelanto$ = this.limitesAdelantoSubject.asObservable();
 
   constructor(
     private router: Router,
@@ -21,10 +23,22 @@ export class AuthService {
     // Verificar si hay token y datos de usuario
     if (this.apiService.isAuthenticated()) {
       const userData = localStorage.getItem('userData');
+      const limitesData = localStorage.getItem('limitesAdelanto');
+      
       if (userData) {
         try {
           const user = JSON.parse(userData);
           this.currentUserSubject.next(user);
+          
+          // Cargar límites de adelanto si existen
+          if (limitesData) {
+            try {
+              const limites = JSON.parse(limitesData);
+              this.limitesAdelantoSubject.next(limites);
+            } catch (error) {
+              console.error('Error parsing limites data:', error);
+            }
+          }
         } catch (error) {
           console.error('Error parsing user data:', error);
           this.clearAuthData();
@@ -56,6 +70,10 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  getLimitesAdelanto(): LimitesAdelanto | null {
+    return this.limitesAdelantoSubject.value;
+  }
+
   login(credentials: LoginRequest): Observable<any> {
     return new Observable(observer => {
       console.log('AuthService: Iniciando login...');
@@ -68,10 +86,13 @@ export class AuthService {
             
             // Guardar datos del usuario en localStorage
             const userData = response.data.user;
+            const limitesData = response.data.limites_adelanto;
             localStorage.setItem('userData', JSON.stringify(userData));
+            localStorage.setItem('limitesAdelanto', JSON.stringify(limitesData));
             
-            // Actualizar el estado del usuario
+            // Actualizar el estado del usuario y límites
             this.currentUserSubject.next(userData);
+            this.limitesAdelantoSubject.next(limitesData);
             
             console.log('AuthService: Login exitoso, token y usuario guardados');
             observer.next(response);
@@ -110,9 +131,11 @@ export class AuthService {
     // Limpiar token y datos del usuario
     this.apiService.clearToken();
     this.currentUserSubject.next(null);
+    this.limitesAdelantoSubject.next(null);
     
     // Limpiar localStorage
     localStorage.removeItem('userData');
+    localStorage.removeItem('limitesAdelanto');
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('recordarLogin');
     localStorage.removeItem('cedulaGuardada');

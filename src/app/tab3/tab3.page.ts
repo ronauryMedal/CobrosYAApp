@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { 
   IonContent, 
   IonCard, 
@@ -13,10 +13,14 @@ import {
   IonSegmentButton, 
   IonGrid,
   IonRow,
-  IonCol
+  IonCol,
+  IonSpinner,
+  IonIcon,
+  IonButton
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../components/header/header.component';
+import { ApiService, Adelanto, HistorialPago } from '../services/api';
 
 @Component({
   selector: 'app-tab3',
@@ -37,74 +41,72 @@ import { HeaderComponent } from '../components/header/header.component';
     IonGrid,
     IonRow,
     IonCol,
+    IonSpinner,
+    IonIcon,
+    IonButton,
     HeaderComponent,
     CommonModule
   ],
 })
-export class Tab3Page {
+export class Tab3Page implements OnInit {
   segmentoSeleccionado = 'adelantos';
+  isLoading = true;
+  errorMessage = '';
 
-  historialAdelantos = [
-    {
-      id: 1,
-      descripcion: 'Adelanto para gastos médicos',
-      monto: 50000,
-      fecha: '2024-01-15',
-      estado: 'aprobado'
-    },
-    {
-      id: 2,
-      descripcion: 'Adelanto para reparación de vehículo',
-      monto: 30000,
-      fecha: '2024-01-10',
-      estado: 'pendiente'
-    },
-    {
-      id: 3,
-      descripcion: 'Adelanto para estudios',
-      monto: 25000,
-      fecha: '2024-01-05',
-      estado: 'rechazado'
-    },
-    {
-      id: 4,
-      descripcion: 'Adelanto para remodelación de casa',
-      monto: 75000,
-      fecha: '2024-01-01',
-      estado: 'aprobado'
-    }
-  ];
+  historialAdelantos: Adelanto[] = [];
+  historialPagos: HistorialPago[] = [];
 
-  historialPagos = [
-    {
-      id: 1,
-      descripcion: 'Pago parcial - Gastos médicos',
-      monto: 8500,
-      fecha: '2024-02-15',
-      tipo: 'pago'
-    },
-    {
-      id: 2,
-      descripcion: 'Descuento nómina - Gastos médicos',
-      monto: 8500,
-      fecha: '2024-02-01',
-      tipo: 'descuento'
-    },
-    {
-      id: 3,
-      descripcion: 'Pago parcial - Remodelación casa',
-      monto: 6250,
-      fecha: '2024-02-15',
-      tipo: 'pago'
-    },
-    {
-      id: 4,
-      descripcion: 'Descuento nómina - Remodelación casa',
-      monto: 6250,
-      fecha: '2024-02-01',
-      tipo: 'descuento'
-    }
-  ];
+  constructor(private apiService: ApiService) {}
+
+  ngOnInit() {
+    this.cargarHistorial();
+  }
+
+  cargarHistorial() {
+    console.log('Cargando historial...');
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    // Cargar historial de adelantos
+    this.apiService.getHistorialAdelantos().subscribe({
+      next: (response) => {
+        console.log('Historial de adelantos cargado:', response);
+        if (response.success) {
+          this.historialAdelantos = response.data || [];
+        } else {
+          // Si hay error pero no es crítico, solo mostrar array vacío
+          this.historialAdelantos = [];
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar historial de adelantos:', error);
+        // En caso de error, mostrar array vacío en lugar de error
+        this.historialAdelantos = [];
+        this.isLoading = false;
+      }
+    });
+
+    // Cargar historial de pagos
+    this.apiService.getHistorialPagos().subscribe({
+      next: (response) => {
+        console.log('Historial de pagos cargado:', response);
+        if (response.success) {
+          this.historialPagos = response.data || [];
+        } else {
+          // Si hay error pero no es crítico, solo mostrar array vacío
+          this.historialPagos = [];
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar historial de pagos:', error);
+        // En caso de error, mostrar array vacío en lugar de error
+        this.historialPagos = [];
+        this.isLoading = false;
+      }
+    });
+  }
 
   segmentChanged(event: any) {
     this.segmentoSeleccionado = event.detail.value;
@@ -127,13 +129,62 @@ export class Tab3Page {
     }
   }
 
-  getTotalAdelantos(): string {
-    const total = this.historialAdelantos.reduce((sum, adelanto) => sum + adelanto.monto, 0);
-    return total.toLocaleString();
+  getTotalAdelantos(): number {
+    return this.historialAdelantos.reduce((sum, adelanto) => sum + adelanto.monto_solicitado, 0);
   }
 
-  getTotalPagos(): string {
-    const total = this.historialPagos.reduce((sum, pago) => sum + pago.monto, 0);
-    return total.toLocaleString();
+  getTotalPagos(): number {
+    return this.historialPagos.reduce((sum, pago) => sum + pago.monto, 0);
+  }
+
+  // Verificar si hay datos
+  tieneAdelantos(): boolean {
+    return this.historialAdelantos.length > 0;
+  }
+
+  tienePagos(): boolean {
+    return this.historialPagos.length > 0;
+  }
+
+  // Formatear moneda
+  formatearMoneda(monto: number): string {
+    return new Intl.NumberFormat('es-DO', {
+      style: 'currency',
+      currency: 'DOP',
+      minimumFractionDigits: 0
+    }).format(monto);
+  }
+
+  // Formatear fecha
+  formatearFecha(fecha: string): string {
+    return new Date(fecha).toLocaleDateString('es-DO', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  }
+
+  // Calcular total de monto restante
+  getTotalMontoRestante(): number {
+    return this.historialAdelantos.reduce((sum, adelanto) => 
+      sum + adelanto.monto_restante, 0
+    );
+  }
+
+  // Obtener adelantos por estado
+  getAdelantosPorEstado(estado: string): Adelanto[] {
+    return this.historialAdelantos.filter(adelanto => adelanto.estado === estado);
+  }
+
+  // Obtener solo adelantos pagados
+  getAdelantosPagados(): Adelanto[] {
+    return this.historialAdelantos.filter(adelanto => adelanto.estado === 'pagado');
+  }
+
+  // Calcular total de adelantos pagados
+  getTotalAdelantosPagados(): number {
+    return this.getAdelantosPagados().reduce((sum, adelanto) => 
+      sum + adelanto.monto_total, 0
+    );
   }
 }

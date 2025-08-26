@@ -2,6 +2,168 @@
   padding: 16px;
 }
 
+// Estados de carga y error
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  text-align: center;
+  
+  ion-spinner {
+    margin-bottom: 16px;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    margin: 0;
+    font-size: 16px;
+  }
+}
+
+.error-container {
+  padding: 16px;
+  
+  ion-card {
+    margin: 0;
+  }
+  
+  ion-card-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    ion-icon {
+      font-size: 24px;
+      color: var(--ion-color-danger);
+    }
+    
+    p {
+      flex: 1;
+      margin: 0;
+    }
+  }
+}
+
+// Estado vacío elegante
+.empty-state {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 32px 16px;
+}
+
+// Sección hero
+.hero-section {
+  margin-bottom: 48px;
+  
+  .hero-icon {
+    margin-bottom: 24px;
+    
+    ion-icon {
+      font-size: 80px;
+      color: var(--ion-color-primary);
+      opacity: 0.8;
+    }
+  }
+  
+  .hero-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--ion-color-dark);
+    margin: 0 0 12px 0;
+    line-height: 1.2;
+  }
+  
+  .hero-subtitle {
+    font-size: 18px;
+    color: var(--ion-color-medium);
+    margin: 0;
+    line-height: 1.4;
+  }
+}
+
+// Sección de beneficios
+.benefits-section {
+  margin-bottom: 48px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.benefit-card {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--ion-color-light) 0%, var(--ion-color-light-shade) 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--ion-color-light-shade);
+  
+  .benefit-icon {
+    margin-right: 16px;
+    flex-shrink: 0;
+    
+    ion-icon {
+      font-size: 32px;
+      color: var(--ion-color-primary);
+    }
+  }
+  
+  .benefit-content {
+    flex: 1;
+    text-align: left;
+    
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+      margin: 0 0 4px 0;
+    }
+    
+    p {
+      font-size: 14px;
+      color: var(--ion-color-medium);
+      margin: 0;
+      line-height: 1.4;
+    }
+  }
+}
+
+// Sección de acción
+.action-section {
+  width: 100%;
+  max-width: 400px;
+  
+  .cta-button {
+    --padding-start: 32px;
+    --padding-end: 32px;
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 24px rgba(56, 128, 255, 0.3);
+    
+    ion-icon {
+      font-size: 24px;
+    }
+  }
+  
+  .action-note {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+// Estilos para cuando hay adelantos
 .stat-item {
   text-align: center;
   padding: 16px;
@@ -22,6 +184,8 @@
 
 ion-card {
   margin-bottom: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 ion-card-title {
@@ -42,4 +206,76 @@ ion-item p {
 
 ion-item[button] {
   --background-hover: var(--ion-color-light);
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+// Estilos para cards según el estado
+ion-item[button].estado-pendiente {
+  --background: rgba(255, 193, 7, 0.1);
+  --background-hover: rgba(255, 193, 7, 0.15);
+  border-left: 4px solid var(--ion-color-warning);
+}
+
+ion-item[button].estado-aprobado {
+  --background: rgba(40, 167, 69, 0.1);
+  --background-hover: rgba(40, 167, 69, 0.15);
+  border-left: 4px solid var(--ion-color-success);
+}
+
+ion-item[button].estado-rechazado {
+  --background: rgba(220, 53, 69, 0.1);
+  --background-hover: rgba(220, 53, 69, 0.15);
+  border-left: 4px solid var(--ion-color-danger);
+}
+
+ion-item[button].estado-pagado {
+  --background: rgba(56, 128, 255, 0.1);
+  --background-hover: rgba(56, 128, 255, 0.15);
+  border-left: 4px solid var(--ion-color-primary);
+}
+
+// Estilo para monto restante
+.monto-restante {
+  color: var(--ion-color-warning);
+  font-weight: 600;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+// Responsive design
+@media (max-width: 576px) {
+  .empty-state {
+    padding: 24px 12px;
+  }
+  
+  .hero-title {
+    font-size: 28px;
+  }
+  
+  .hero-subtitle {
+    font-size: 16px;
+  }
+  
+  .benefit-card {
+    padding: 16px;
+    
+    .benefit-icon ion-icon {
+      font-size: 28px;
+    }
+    
+    .benefit-content h3 {
+      font-size: 16px;
+    }
+    
+    .benefit-content p {
+      font-size: 13px;
+    }
+  }
+  
+  .cta-button {
+    font-size: 16px;
+    --padding-start: 24px;
+    --padding-end: 24px;
+  }
 }

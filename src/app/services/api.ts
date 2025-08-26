@@ -8,34 +8,34 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface LoginResponse {
-  success: boolean;
-  message: string;
-  data: {
-    user: {
-      id: number;
-      nombre: string;
-      email: string;
-      telefono: string | null;
-      empresa: {
-        id: number;
-        nombre: string;
-      } | null;
-    };
-    token: string;
-    token_type: string;
-  };
-}
-
 export interface User {
   id: number;
   nombre: string;
   email: string;
   telefono: string | null;
+  salario: number;
   empresa: {
     id: number;
     nombre: string;
+    metodo_pago: string;
   } | null;
+}
+
+export interface LimitesAdelanto {
+  salario_mensual: number;
+  monto_maximo_solicitable: number;
+  porcentaje_maximo: number;
+}
+
+export interface LoginResponse {
+  success: boolean;
+  message: string;
+  data: {
+    user: User;
+    token: string;
+    token_type: string;
+    limites_adelanto: LimitesAdelanto;
+  };
 }
 
 export interface ApiResponse<T> {
@@ -70,6 +70,43 @@ export interface PagoResumen {
   fecha: string;
   tipo: 'pago' | 'descuento';
   descripcion: string;
+}
+
+export interface Adelanto {
+  id: number;
+  monto_solicitado: number;
+  interes: number;
+  monto_total: number;
+  tipo_pago: string;
+  meses_pago: number;
+  monto_mensual: number;
+  motivo: string;
+  estado: 'pendiente' | 'aprobado' | 'rechazado' | 'pagado';
+  fecha_solicitud: string;
+  esta_pagado: boolean;
+  monto_restante: number;
+}
+
+export interface HistorialAdelanto {
+  id: number;
+  descripcion: string;
+  monto: number;
+  fecha: string;
+  estado: string;
+  meses: number;
+  montoMensual: number;
+  interes: number;
+  montoTotal: number;
+  observacion?: string;
+}
+
+export interface HistorialPago {
+  id: number;
+  descripcion: string;
+  monto: number;
+  fecha: string;
+  tipo: string; // 'pago' | 'descuento'
+  adelantoId?: number;
 }
 
 @Injectable({
@@ -171,6 +208,32 @@ export class ApiService {
       );
   }
 
+  getHistorialAdelantos(): Observable<ApiResponse<Adelanto[]>> {
+    console.log('Obteniendo historial de adelantos...');
+    return this.http.get<ApiResponse<Adelanto[]>>(`${this.baseUrl}/empleado/adelantos`, { headers: this.getHeaders() })
+      .pipe(
+        map(response => {
+          console.log('Historial de adelantos recibido:', response);
+          return response;
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  getHistorialPagos(): Observable<ApiResponse<HistorialPago[]>> {
+    console.log('Obteniendo historial de pagos...');
+    // Por ahora, si no existe el endpoint de pagos, devolvemos un array vacío
+    return new Observable(observer => {
+      console.log('Endpoint de pagos no disponible, devolviendo array vacío');
+      observer.next({
+        success: true,
+        message: 'No hay pagos registrados',
+        data: []
+      });
+      observer.complete();
+    });
+  }
+
   // Métodos de utilidad
   setToken(token: string) {
     this.token = token;
@@ -209,6 +272,7 @@ export class ApiService {
     } else {
       // Error del servidor
       if (error.status === 401) {
+        // El interceptor se encargará de limpiar los datos y redirigir
         errorMessage = 'No autorizado. Por favor, inicia sesión nuevamente.';
       } else if (error.status === 403) {
         errorMessage = 'Acceso denegado.';

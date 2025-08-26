@@ -47,17 +47,30 @@ ion-content {
   
   ion-card-content {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 0.5rem;
     
     ion-icon {
       font-size: 1.5rem;
       color: var(--ion-color-danger);
+      margin-bottom: 0.5rem;
     }
     
     p {
       flex: 1;
-      margin: 0;
+      margin: 0 0 1rem 0;
+      font-weight: 500;
+    }
+    
+    .error-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      
+      ion-button {
+        --color: var(--ion-color-danger);
+        font-weight: 500;
+      }
     }
   }
 }

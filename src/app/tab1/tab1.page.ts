@@ -84,6 +84,11 @@ export class Tab1Page implements OnInit {
         console.error('Error al cargar dashboard:', error);
         this.errorMessage = error.message || 'Error al cargar el dashboard';
         this.isLoading = false;
+        
+        // Si es un error 401, no mostrar el botón de reintentar
+        if (error.status === 401) {
+          this.errorMessage = 'No autorizado. Por favor, inicia sesión nuevamente.';
+        }
       }
     });
   }
@@ -97,6 +102,11 @@ export class Tab1Page implements OnInit {
   // Navegar a solicitar adelanto
   irASolicitarAdelanto() {
     this.router.navigate(['/solicitar-adelanto']);
+  }
+
+  // Navegar al login
+  irAlLogin() {
+    this.router.navigate(['/login']);
   }
 
   // Verificar si hay datos válidos en el dashboard
