@@ -1,91 +1,121 @@
 <ion-content [fullscreen]="true" class="login-content">
-  <div class="login-container">
-    <!-- Logo y Título -->
-    <div class="logo-section">
-      <ion-icon name="card-outline" class="logo-icon"></ion-icon>
-      <h1>PagosYA</h1>
-      <p>Gestión de Adelantos</p>
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <ion-icon name="cellular-outline"></ion-icon>
+      <ion-icon name="wifi-outline"></ion-icon>
+      <ion-icon name="battery-full-outline"></ion-icon>
     </div>
+  </div>
 
-    <!-- Formulario de Login -->
-    <ion-card class="login-card">
-      <ion-card-content>
-        <h2>Iniciar Sesión</h2>
-        <p class="subtitle">Ingresa tus credenciales para continuar</p>
+  <!-- Header Section -->
+  <div class="header-section">
+    <!-- Logo -->
+    <div class="logo-container">
+      <div class="logo">
+        <span class="logo-letter">C</span>
+        <span class="logo-dot"></span>
+      </div>
+    </div>
+    
+    <div class="greeting">
+      <h1>Hola</h1>
+      <h2>otra vez</h2>
+    </div>
+    <p class="instruction">Accede para continuar</p>
+  </div>
 
-        <form [formGroup]="loginForm" (ngSubmit)="login()">
-          <!-- Cédula -->
-          <ion-item class="form-item">
-            <ion-label position="stacked">Cédula *</ion-label>
-            <ion-input 
-              formControlName="cedula" 
-              type="text" 
-              placeholder="000-0000000-0"
-              maxlength="13"
-              (ionInput)="formatearCedula($event)">
-            </ion-input>
-            <ion-note slot="error" *ngIf="loginForm.get('cedula')?.invalid && loginForm.get('cedula')?.touched">
-              <span *ngIf="loginForm.get('cedula')?.errors?.['required']">La cédula es requerida</span>
-              <span *ngIf="loginForm.get('cedula')?.errors?.['minlength']">La cédula debe tener al menos 11 caracteres</span>
-            </ion-note>
-          </ion-item>
+  <!-- Content Section -->
+  <div class="content-section">
 
-          <!-- Contraseña -->
-          <ion-item class="form-item">
-            <ion-label position="stacked">Contraseña *</ion-label>
-            <ion-input 
-              formControlName="password" 
-              [type]="mostrarPassword ? 'text' : 'password'" 
-              placeholder="Ingresa tu contraseña"
-              autocomplete="current-password">
-            </ion-input>
-            <ion-button 
-              fill="clear" 
-              slot="end" 
-              (click)="togglePassword()"
-              class="password-toggle">
-              <ion-icon [name]="mostrarPassword ? 'eye-off' : 'eye'"></ion-icon>
-            </ion-button>
-            <ion-note slot="error" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-              La contraseña es requerida
-            </ion-note>
-          </ion-item>
 
-          <!-- Recordar contraseña -->
-          <ion-item class="form-item">
-            <ion-checkbox formControlName="recordar"></ion-checkbox>
-            <ion-label>Recordar cédula</ion-label>
-          </ion-item>
+    <!-- Login Form -->
+    <form [formGroup]="loginForm" (ngSubmit)="login()" class="login-form">
+      <!-- Cédula Input -->
+      <div class="input-group">
+        <label>Cedula o Pasaporte</label>
+        <ion-input 
+          formControlName="cedula" 
+          type="text" 
+          placeholder="000-0000000-0"
+          maxlength="13"
+          (ionInput)="formatearCedula($event)"
+          class="form-input">
+        </ion-input>
+      </div>
 
-          <!-- Botón de Login -->
+      <!-- Password Input -->
+      <div class="input-group">
+        <label>Contraseña</label>
+        <div class="password-input-container">
+          <ion-input 
+            formControlName="password" 
+            [type]="mostrarPassword ? 'text' : 'password'" 
+            placeholder="Ingresa tu contraseña"
+            autocomplete="current-password"
+            class="form-input">
+          </ion-input>
           <ion-button 
-            expand="block" 
-            type="submit" 
-            [disabled]="!loginForm.valid || isLoading"
-            class="login-button">
-            <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
-            <span *ngIf="!isLoading">Iniciar Sesión</span>
-          </ion-button>
-
-          <!-- Mensaje de error -->
-          <div class="error-message" *ngIf="errorMessage">
-            <ion-icon name="alert-circle"></ion-icon>
-            <span>{{ errorMessage }}</span>
-          </div>
-        </form>
-
-        <!-- Enlaces adicionales -->
-        <div class="login-links">
-          <ion-button fill="clear" size="small">
-            ¿Olvidaste tu contraseña?
+            fill="clear" 
+            (click)="togglePassword()"
+            class="password-toggle">
+            <ion-icon [name]="mostrarPassword ? 'eye-off' : 'eye'"></ion-icon>
           </ion-button>
         </div>
-      </ion-card-content>
-    </ion-card>
+      </div>
 
-    <!-- Footer -->
-    <div class="footer">
-      <p>&copy; 2024 PagosYA. Todos los derechos reservados.</p>
+      <!-- Options Row -->
+      <div class="options-row">
+        <div class="checkbox-group">
+          <ion-checkbox formControlName="recordar"></ion-checkbox>
+          <label>Recuerdame</label>
+        </div>
+        <ion-button fill="clear" class="forgot-password">
+          Contraseña olvidada?
+        </ion-button>
+      </div>
+
+      <!-- Login Button -->
+      <ion-button 
+        expand="block" 
+        type="submit" 
+        [disabled]="!loginForm.valid || isLoading"
+        class="login-button">
+        <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
+        <span *ngIf="!isLoading">Iniciar Session</span>
+      </ion-button>
+
+      <!-- Error Message -->
+      <div class="error-message" *ngIf="errorMessage">
+        <ion-icon name="alert-circle"></ion-icon>
+        <span>{{ errorMessage }}</span>
+      </div>
+    </form>
+
+
+
+    <!-- Testing Buttons -->
+    <div class="testing-buttons">
+      <ion-button 
+        fill="clear" 
+        size="small" 
+        color="warning"
+        (click)="resetOnboarding()">
+        🔄 Ver Onboarding
+      </ion-button>
+      <ion-button 
+        fill="clear" 
+        size="small" 
+        color="danger"
+        (click)="clearAllData()">
+        🗑️ Limpiar Todo
+      </ion-button>
     </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>Cobraya *</p>
   </div>
 </ion-content>

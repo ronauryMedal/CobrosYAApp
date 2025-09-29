@@ -1,0 +1,90 @@
+<ion-content class="onboarding-content">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <ion-icon name="cellular-outline"></ion-icon>
+      <ion-icon name="wifi-outline"></ion-icon>
+      <ion-icon name="battery-full-outline"></ion-icon>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
+    </div>
+  </div>
+
+  <!-- Carousel -->
+  <div class="onboarding-slides">
+    <div class="slide-wrapper" *ngFor="let slide of slides; let i = index" [class.active]="i === currentSlide">
+      <!-- Image Section -->
+      <div class="image-section">
+        <div class="image-placeholder" [class]="'slide-' + slide.id">
+          <img 
+            *ngIf="slide.image" 
+            [src]="slide.image" 
+            [alt]="slide.title"
+            class="slide-image"
+            (error)="onImageError($event, slide)"
+          />
+          <ion-icon 
+            *ngIf="!slide.image || slide.imageError" 
+            [name]="slide.icon" 
+            class="slide-icon">
+          </ion-icon>
+        </div>
+      </div>
+
+      <!-- Content Section -->
+      <div class="content-section">
+        <!-- Logo -->
+        <div class="logo-container">
+          <div class="logo">C</div>
+        </div>
+
+        <!-- Title and Description -->
+        <div class="text-content">
+          <h1 class="slide-title">{{ slide.title }}</h1>
+          <p class="slide-description">{{ slide.description }}</p>
+        </div>
+
+        <!-- Pagination Dots -->
+        <div class="pagination-dots">
+          <div 
+            *ngFor="let dot of slides; let j = index" 
+            class="dot"
+            [class.active]="j === currentSlide"
+            (click)="onSlideChange(j)">
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <ion-button 
+            expand="block" 
+            class="next-button"
+            (click)="nextSlide()">
+            {{ currentSlide === slides.length - 1 ? 'Comenzar' : 'Siguiente' }}
+          </ion-button>
+          
+          <ion-button 
+            fill="clear" 
+            class="skip-button"
+            (click)="skipOnboarding()">
+            Saltar
+          </ion-button>
+          
+          <!-- Botón temporal para resetear onboarding -->
+          <ion-button 
+            fill="clear" 
+            class="reset-button"
+            (click)="resetOnboarding()">
+            Resetear Onboarding
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

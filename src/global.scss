@@ -35,3 +35,94 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/* Estilos para alertas de sesión */
+.session-warning-alert {
+  --background: #fff;
+  --border-radius: 16px;
+  
+  ion-alert {
+    --background: #fff;
+    --border-radius: 16px;
+  }
+  
+  .alert-wrapper {
+    border-radius: 16px;
+  }
+  
+  .alert-button-cancel {
+    --color: #ff6b35;
+    --background: #fff;
+    --border-color: #ff6b35;
+  }
+  
+  .alert-button-confirm {
+    --color: #fff;
+    --background: #3880ff;
+  }
+}
+
+.session-expired-alert {
+  --background: #fff;
+  --border-radius: 16px;
+  
+  ion-alert {
+    --background: #fff;
+    --border-radius: 16px;
+  }
+  
+  .alert-wrapper {
+    border-radius: 16px;
+  }
+  
+  .alert-button {
+    --color: #fff;
+    --background: #ff6b35;
+  }
+}
+
+/* Estilos para alertas de conectividad */
+.connectivity-alert {
+  --background: #fff;
+  --border-radius: 16px;
+  
+  ion-alert {
+    --background: #fff;
+    --border-radius: 16px;
+  }
+  
+  .alert-wrapper {
+    border-radius: 16px;
+  }
+  
+  .alert-button {
+    --color: #fff;
+    --background: #3880ff;
+  }
+}
+
+.connectivity-alert.offline {
+  .alert-button {
+    --background: #ff6b35;
+  }
+}
+
+.connectivity-alert.server-unreachable {
+  .alert-button {
+    --background: #ff6b35;
+  }
+}
+
+.connectivity-alert.back-online {
+  .alert-button {
+    --background: #28a745;
+  }
+}
+
+.connectivity-alert.operation-error {
+  .alert-button {
+    --background: #ff6b35;
+  }
+}
+
+

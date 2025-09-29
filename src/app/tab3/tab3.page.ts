@@ -187,4 +187,6 @@ export class Tab3Page implements OnInit {
       sum + adelanto.monto_total, 0
     );
   }
+
+
 }

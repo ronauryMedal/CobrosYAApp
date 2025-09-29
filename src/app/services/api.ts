@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { ConnectivityService } from './connectivity.service';
 
 export interface LoginRequest {
   cedula: string;
@@ -116,7 +117,10 @@ export class ApiService {
   private baseUrl = 'http://localhost:8000/api';
   private token: string = '';
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private connectivityService: ConnectivityService
+  ) {
     // Cargar token del localStorage si existe
     this.token = localStorage.getItem('token') || '';
   }
@@ -250,7 +254,10 @@ export class ApiService {
   }
 
   isAuthenticated(): boolean {
-    return !!this.token;
+    // Verificar que el token existe y no está vacío
+    const hasToken = !!this.token && this.token.trim() !== '';
+    console.log('ApiService: Verificando autenticación, token existe:', hasToken);
+    return hasToken;
   }
 
   private getHeaders(): HttpHeaders {
@@ -263,15 +270,21 @@ export class ApiService {
 
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Ha ocurrido un error';
+    let isConnectivityError = false;
     
     console.error('Error completo:', error);
     
     if (error.error instanceof ErrorEvent) {
-      // Error del cliente
-      errorMessage = error.error.message;
+      // Error del cliente (problemas de red)
+      isConnectivityError = true;
+      errorMessage = 'Problema de conectividad. Verifica tu conexión a internet.';
     } else {
       // Error del servidor
-      if (error.status === 401) {
+      if (error.status === 0) {
+        // Error de red (servidor no alcanzable)
+        isConnectivityError = true;
+        errorMessage = 'No se puede conectar con el servidor. Verifica tu conexión.';
+      } else if (error.status === 401) {
         // El interceptor se encargará de limpiar los datos y redirigir
         errorMessage = 'No autorizado. Por favor, inicia sesión nuevamente.';
       } else if (error.status === 403) {
@@ -285,9 +298,21 @@ export class ApiService {
           const firstError = Object.values(validationErrors)[0];
           errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
         }
+      } else if (error.status >= 500) {
+        // Error del servidor
+        isConnectivityError = true;
+        errorMessage = 'El servidor está experimentando problemas. Inténtalo más tarde.';
       } else if (error.error && error.error.message) {
         errorMessage = error.error.message;
       }
+    }
+    
+    // Si es un error de conectividad, actualizar el estado
+    if (isConnectivityError) {
+      this.connectivityService.updateConnectivityStatus(
+        navigator.onLine, 
+        false
+      );
     }
     
     console.error('API Error:', error);

@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../services/auth';
 import { LoginRequest } from '../services/api';
+import { OnboardingUtils } from '../utils/onboarding-utils';
 
 @Component({
   selector: 'app-login',
@@ -89,6 +90,16 @@ export class LoginPage implements OnInit {
 
   togglePassword() {
     this.mostrarPassword = !this.mostrarPassword;
+  }
+
+  resetOnboarding() {
+    OnboardingUtils.resetOnboarding();
+    this.router.navigate(['/onboarding']);
+  }
+
+  clearAllData() {
+    OnboardingUtils.clearAllAppData();
+    window.location.reload();
   }
 
   async login() {

@@ -12,9 +12,21 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   canActivate(): boolean {
-    if (this.authService.isLoggedIn()) {
+    // Verificar si el usuario está realmente autenticado
+    const isLoggedIn = this.authService.isLoggedIn();
+    const currentUser = this.authService.getCurrentUser();
+    
+    console.log('AuthGuard: Verificando autenticación...');
+    console.log('AuthGuard: isLoggedIn =', isLoggedIn);
+    console.log('AuthGuard: currentUser =', currentUser);
+    
+    if (isLoggedIn && currentUser) {
+      console.log('AuthGuard: Usuario autenticado, permitiendo acceso');
       return true;
     } else {
+      console.log('AuthGuard: Usuario no autenticado, redirigiendo a login');
+      // Limpiar cualquier dato de autenticación inválido
+      this.authService.logout();
       this.router.navigate(['/login']);
       return false;
     }

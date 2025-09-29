@@ -1,0 +1,12 @@
+<div 
+  class="connectivity-indicator" 
+  [class]="getStatusColor()"
+  (click)="onIndicatorClick()"
+  *ngIf="connectivityStatus && (!connectivityStatus.isOnline || !connectivityStatus.isServerReachable)"
+>
+  <ion-icon 
+    [name]="getStatusIcon()" 
+    [color]="getStatusColor()"
+  ></ion-icon>
+  <span class="status-text">{{ getStatusText() }}</span>
+</div>
