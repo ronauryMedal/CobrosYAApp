@@ -4,7 +4,6 @@
   overflow: hidden;
 }
 
-// Status Bar
 .status-bar {
   position: fixed;
   top: 0;
@@ -35,7 +34,6 @@
   }
 }
 
-// Progress Bar
 .progress-container {
   position: fixed;
   top: 50px;
@@ -59,7 +57,6 @@
   }
 }
 
-// Slides
 .onboarding-slides {
   height: 100vh;
   padding-top: 80px;
@@ -85,57 +82,73 @@
   }
 }
 
-// Image Section
 .image-section {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
   
   .image-placeholder {
-    width: 200px;
-    height: 200px;
+    width: 100%;
+    height: 100%;
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
     transition: all 0.3s ease;
     
     .slide-icon {
-      font-size: 80px;
+      font-size: 120px;
       color: white;
+      position: absolute;
+      z-index: 2;
     }
     
     .slide-image {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 20px;
+      object-position: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
     }
     
-    // Diferentes colores para cada slide
+    // Overlay para mejorar legibilidad del texto
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.1) 0%,
+        rgba(0, 0, 0, 0.3) 100%
+      );
+      z-index: 1;
+    }
+    
     &.slide-1 {
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
-      border-color: rgba(102, 126, 234, 0.4);
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
     }
     
     &.slide-2 {
-      background: linear-gradient(135deg, rgba(76, 175, 80, 0.3), rgba(139, 195, 74, 0.3));
-      border-color: rgba(76, 175, 80, 0.4);
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.8), rgba(139, 195, 74, 0.8));
     }
     
     &.slide-3 {
-      background: linear-gradient(135deg, rgba(255, 193, 7, 0.3), rgba(255, 152, 0, 0.3));
-      border-color: rgba(255, 193, 7, 0.4);
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.8), rgba(255, 152, 0, 0.8));
     }
   }
 }
 
-// Content Section
 .content-section {
   background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
   border-radius: 30px 30px 0 0;
@@ -155,7 +168,6 @@
   }
 }
 
-// Logo
 .logo-container {
   text-align: center;
   margin-bottom: 30px;
@@ -175,7 +187,6 @@
   }
 }
 
-// Text Content
 .text-content {
   text-align: center;
   margin-bottom: 40px;
@@ -197,7 +208,6 @@
   }
 }
 
-// Pagination Dots
 .pagination-dots {
   display: flex;
   justify-content: center;
@@ -210,6 +220,7 @@
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.3);
     transition: all 0.3s ease;
+    cursor: pointer;
     
     &.active {
       background: white;
@@ -218,7 +229,6 @@
   }
 }
 
-// Action Buttons
 .action-buttons {
   display: flex;
   flex-direction: column;
@@ -232,10 +242,6 @@
     font-weight: 600;
     font-size: 16px;
     text-transform: none;
-    
-    &:hover {
-      --box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-    }
   }
   
   .skip-button {
@@ -243,10 +249,6 @@
     font-size: 14px;
     text-transform: none;
     height: 40px;
-    
-    &:hover {
-      --color: white;
-    }
   }
   
   .reset-button {
@@ -255,25 +257,9 @@
     text-transform: none;
     height: 30px;
     margin-top: 10px;
-    
-    &:hover {
-      --color: #ff5722;
-    }
   }
 }
 
-// Pagination Dots Clickable
-.pagination-dots {
-  .dot {
-    cursor: pointer;
-    
-    &:hover {
-      background: rgba(255, 255, 255, 0.5);
-    }
-  }
-}
-
-// Responsive Design
 @media (max-width: 480px) {
   .content-section {
     padding: 30px 20px 20px;
@@ -287,45 +273,24 @@
     font-size: 14px !important;
   }
   
+  .image-section {
+    flex: 1.2; // Dar más espacio a la imagen en móviles
+  }
+  
   .image-placeholder {
-    width: 150px !important;
-    height: 150px !important;
-    
     .slide-icon {
-      font-size: 60px !important;
-    }
-    
-    .slide-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      font-size: 80px !important;
     }
   }
 }
 
-// Animation Classes
-.slide-content {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+// Media query para pantallas más grandes
+@media (min-width: 768px) {
+  .image-section {
+    flex: 1.5; // Más espacio para la imagen en tablets/desktop
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  .content-section {
+    flex: 0.8; // Menos espacio para el contenido
   }
-}
-
-// Hover Effects
-.image-placeholder:hover {
-  transform: scale(1.05);
-  transition: transform 0.3s ease;
-}
-
-.logo:hover {
-  transform: scale(1.1);
-  transition: transform 0.3s ease;
 }

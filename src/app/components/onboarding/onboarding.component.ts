@@ -26,21 +26,21 @@ export class OnboardingComponent implements OnInit {
       id: 1,
       title: 'Aquí comienza tu libertad financiera',
       description: 'Solicita, aprueba y recibe tu adelanto en pocos pasos – sin papeleo innecesario.',
-      image: 'assets/images/onboarding/slide1.jpg',
+      image: 'assets/images/onboarding/slider1.png',
       icon: 'people-outline'
     },
     {
       id: 2,
       title: 'Tu sueldo cuando lo necesites',
       description: 'Accede a tu sueldo antes del día de pago – rápido, seguro y sin complicaciones.',
-      image: 'assets/images/onboarding/slide2.jpg',
+      image: 'assets/images/onboarding/slider2.jpg',
       icon: 'restaurant-outline'
     },
     {
       id: 3,
       title: 'Accede a tu dinero hoy',
       description: 'Programa recordatorios, revisa tu historial y mantén el equilibrio perfecto.',
-      image: 'assets/images/onboarding/slide3.jpg',
+      image: 'assets/images/onboarding/slider3.jpg',
       icon: 'card-outline'
     }
   ];

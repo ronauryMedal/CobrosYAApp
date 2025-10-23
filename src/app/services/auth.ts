@@ -17,6 +17,7 @@ export class AuthService {
   private readonly SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutos
   private sessionTimeoutId: any = null;
   private lastActivity: number = Date.now();
+  private isLoggingOut: boolean = false;
 
   constructor(
     private router: Router,
@@ -118,25 +119,28 @@ export class AuthService {
       } else {
         console.log('AuthService: No hay datos de usuario, intentando obtener perfil...');
         // Si hay token pero no datos de usuario, intentar obtener el perfil
-        this.apiService.getProfile().subscribe({
-          next: (response) => {
-            if (response.success) {
-              console.log('AuthService: Perfil obtenido exitosamente');
-              this.currentUserSubject.next(response.data);
-              localStorage.setItem('userData', JSON.stringify(response.data));
-              
-              // Configurar timeout de sesión
-              this.resetSessionTimeout();
-            } else {
-              console.log('AuthService: Error al obtener perfil, haciendo logout');
+        // Solo hacer esta llamada si no estamos ya en proceso de logout
+        if (!this.isLoggingOut) {
+          this.apiService.getProfile().subscribe({
+            next: (response) => {
+              if (response.success) {
+                console.log('AuthService: Perfil obtenido exitosamente');
+                this.currentUserSubject.next(response.data);
+                localStorage.setItem('userData', JSON.stringify(response.data));
+                
+                // Configurar timeout de sesión
+                this.resetSessionTimeout();
+              } else {
+                console.log('AuthService: Error al obtener perfil, haciendo logout');
+                this.logout();
+              }
+            },
+            error: (error) => {
+              console.error('AuthService: Error al obtener perfil:', error);
               this.logout();
             }
-          },
-          error: (error) => {
-            console.error('AuthService: Error al obtener perfil:', error);
-            this.logout();
-          }
-        });
+          });
+        }
       }
     } else {
       console.log('AuthService: No hay token válido, limpiando datos...');
@@ -215,6 +219,9 @@ export class AuthService {
   logout() {
     console.log('AuthService: Iniciando logout...');
     
+    // Marcar que estamos en proceso de logout para evitar llamadas adicionales
+    this.isLoggingOut = true;
+    
     // Limpiar timeout de sesión
     this.clearSessionTimeout();
     
@@ -228,6 +235,8 @@ export class AuthService {
       },
       complete: () => {
         this.clearAuthData();
+        // Resetear la bandera después de limpiar los datos
+        this.isLoggingOut = false;
       }
     });
   }

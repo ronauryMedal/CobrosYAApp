@@ -21,6 +21,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ApiService, DashboardData, AdelantoResumen, PagoResumen } from '../services/api';
+import { AuthService } from '../services/auth';
 import { HeaderComponent } from '../components/header/header.component';
 
 @Component({
@@ -52,22 +53,45 @@ import { HeaderComponent } from '../components/header/header.component';
 export class Tab1Page implements OnInit {
   isLoading = true;
   errorMessage = '';
+  private isLoadingDashboard = false; // Bandera para evitar múltiples llamadas simultáneas
   
   // Datos del dashboard
   dashboardData: DashboardData | null = null;
 
   constructor(
     private apiService: ApiService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit() {
+    // Verificar autenticación antes de cargar datos
+    if (!this.authService.isLoggedIn()) {
+      console.log('Usuario no autenticado, redirigiendo a login...');
+      this.router.navigate(['/login']);
+      return;
+    }
+    
     this.cargarDashboard();
   }
 
   cargarDashboard() {
+    // Verificar autenticación antes de hacer la llamada
+    if (!this.authService.isLoggedIn()) {
+      console.log('Usuario no autenticado durante carga del dashboard, redirigiendo...');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    // Evitar múltiples llamadas simultáneas
+    if (this.isLoadingDashboard) {
+      console.log('Ya hay una carga de dashboard en progreso, ignorando llamada duplicada');
+      return;
+    }
+
     console.log('Cargando datos del dashboard...');
     this.isLoading = true;
+    this.isLoadingDashboard = true;
     this.errorMessage = '';
 
     this.apiService.getDashboard().subscribe({
@@ -79,16 +103,22 @@ export class Tab1Page implements OnInit {
           this.errorMessage = response.message || 'Error al cargar el dashboard';
         }
         this.isLoading = false;
+        this.isLoadingDashboard = false;
       },
       error: (error) => {
         console.error('Error al cargar dashboard:', error);
-        this.errorMessage = error.message || 'Error al cargar el dashboard';
         this.isLoading = false;
+        this.isLoadingDashboard = false;
         
-        // Si es un error 401, no mostrar el botón de reintentar
+        // Si es un error 401, redirigir automáticamente al login
         if (error.status === 401) {
-          this.errorMessage = 'No autorizado. Por favor, inicia sesión nuevamente.';
+          console.log('Error 401 detectado, redirigiendo al login...');
+          this.authService.logout();
+          this.router.navigate(['/login']);
+          return;
         }
+        
+        this.errorMessage = error.message || 'Error al cargar el dashboard';
       }
     });
   }

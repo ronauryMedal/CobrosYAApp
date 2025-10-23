@@ -32,7 +32,7 @@
                  </ion-item>
 
                                                     <!-- Monto Solicitado (Segundo) -->
-                                   <ion-item [class.ion-invalid]="adelantoForm.get('montoSolicitado')?.invalid && adelantoForm.get('montoSolicitado')?.touched">
+                 <ion-item [class.ion-invalid]="adelantoForm.get('montoSolicitado')?.invalid && adelantoForm.get('montoSolicitado')?.touched">
                    <ion-label position="stacked">Monto Solicitado *</ion-label>
                    <ion-input 
                      formControlName="montoSolicitado" 
@@ -42,7 +42,7 @@
                    </ion-input>
                    <ion-note slot="helper">
                      <span *ngIf="limitesAdelanto">
-                       Límite máximo: {{ formatearMoneda(montoMaximoSolicitable) }} ({{ limitesAdelanto?.porcentaje_maximo }}% del salario mensual)
+                       Límite máximo: {{ formatearMoneda(montoMaximoSolicitable) }} ({{ limitesAdelanto.porcentaje_maximo }}% del salario mensual)
                      </span>
                      <span *ngIf="!limitesAdelanto">Ingrese el monto que desea solicitar</span>
                    </ion-note>
