@@ -92,4 +92,16 @@ export class OnboardingComponent implements OnInit {
     console.log('Error cargando imagen para slide:', slide.id);
     slide.imageError = true;
   }
+
+  // Obtener la ruta del logo según el tema
+  getLogoPath(): string {
+    // Solo verificar la clase dark en el body (método principal de Ionic)
+    const isDarkMode = document.body.classList.contains('dark');
+    
+    if (isDarkMode) {
+      return 'assets/images/logos/Isotipo blanco.png';
+    } else {
+      return 'assets/images/logos/Isotipo a color.png';
+    }
+  }
 }

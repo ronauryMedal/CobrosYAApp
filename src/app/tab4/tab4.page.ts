@@ -8,12 +8,14 @@ import {
   IonList, 
   IonItem, 
   IonLabel, 
-  IonIcon
+  IonIcon,
+  ModalController
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { User } from '../services/api';
 import { AuthService } from '../services/auth';
 import { HeaderComponent } from '../components/header/header.component';
+import { CambiarPasswordPage } from '../cambiar-password/cambiar-password.page';
 
 @Component({
   selector: 'app-tab4',
@@ -36,7 +38,10 @@ import { HeaderComponent } from '../components/header/header.component';
 export class Tab4Page {
   currentUser: User | null = null;
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private modalController: ModalController
+  ) {
     this.currentUser = this.authService.getCurrentUser();
   }
 
@@ -45,9 +50,13 @@ export class Tab4Page {
     // Aquí se implementaría la navegación a editar perfil
   }
 
-  cambiarContrasena() {
-    console.log('Cambiar contraseña');
-    // Aquí se implementaría la navegación a cambiar contraseña
+  async cambiarContrasena() {
+    const modal = await this.modalController.create({
+      component: CambiarPasswordPage,
+      presentingElement: await this.modalController.getTop()
+    });
+    
+    await modal.present();
   }
 
   verNotificaciones() {

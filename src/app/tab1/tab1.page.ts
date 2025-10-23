@@ -181,6 +181,11 @@ export class Tab1Page implements OnInit {
 
   // Formatear moneda
   formatearMoneda(monto: number): string {
+    // Verificar si el monto es válido
+    if (monto === null || monto === undefined || isNaN(monto)) {
+      return 'RD$0';
+    }
+    
     return new Intl.NumberFormat('es-DO', {
       style: 'currency',
       currency: 'DOP',

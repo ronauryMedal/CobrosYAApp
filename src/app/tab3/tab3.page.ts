@@ -130,11 +130,17 @@ export class Tab3Page implements OnInit {
   }
 
   getTotalAdelantos(): number {
-    return this.historialAdelantos.reduce((sum, adelanto) => sum + adelanto.monto_solicitado, 0);
+    return this.historialAdelantos.reduce((sum, adelanto) => {
+      const monto = adelanto.monto_solicitado || 0;
+      return sum + (isNaN(monto) ? 0 : monto);
+    }, 0);
   }
 
   getTotalPagos(): number {
-    return this.historialPagos.reduce((sum, pago) => sum + pago.monto, 0);
+    return this.historialPagos.reduce((sum, pago) => {
+      const monto = pago.monto || 0;
+      return sum + (isNaN(monto) ? 0 : monto);
+    }, 0);
   }
 
   // Verificar si hay datos
@@ -148,6 +154,11 @@ export class Tab3Page implements OnInit {
 
   // Formatear moneda
   formatearMoneda(monto: number): string {
+    // Verificar si el monto es válido
+    if (monto === null || monto === undefined || isNaN(monto)) {
+      return 'RD$0';
+    }
+    
     return new Intl.NumberFormat('es-DO', {
       style: 'currency',
       currency: 'DOP',
@@ -166,9 +177,10 @@ export class Tab3Page implements OnInit {
 
   // Calcular total de monto restante
   getTotalMontoRestante(): number {
-    return this.historialAdelantos.reduce((sum, adelanto) => 
-      sum + adelanto.monto_restante, 0
-    );
+    return this.historialAdelantos.reduce((sum, adelanto) => {
+      const monto = adelanto.monto_restante || 0;
+      return sum + (isNaN(monto) ? 0 : monto);
+    }, 0);
   }
 
   // Obtener adelantos por estado
@@ -183,9 +195,10 @@ export class Tab3Page implements OnInit {
 
   // Calcular total de adelantos pagados
   getTotalAdelantosPagados(): number {
-    return this.getAdelantosPagados().reduce((sum, adelanto) => 
-      sum + adelanto.monto_total, 0
-    );
+    return this.getAdelantosPagados().reduce((sum, adelanto) => {
+      const monto = adelanto.monto_total || 0;
+      return sum + (isNaN(monto) ? 0 : monto);
+    }, 0);
   }
 
 

@@ -158,6 +158,18 @@ export class LoginPage implements OnInit {
     }
   }
 
+  // Obtener la ruta del logo según el tema
+  getLogoPath(): string {
+    // Solo verificar la clase dark en el body (método principal de Ionic)
+    const isDarkMode = document.body.classList.contains('dark');
+    
+    if (isDarkMode) {
+      return 'assets/images/logos/Isotipo blanco.png';
+    } else {
+      return 'assets/images/logos/Isotipo a color.png';
+    }
+  }
+
   // Cargar cédula guardada si existe
   cargarCedulaGuardada() {
     const recordarLogin = localStorage.getItem('recordarLogin');

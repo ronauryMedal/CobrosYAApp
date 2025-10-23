@@ -1,3 +1,11 @@
+// Estilos para el logo del header
+.header-logo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  margin-right: 8px;
+}
+
 // Estilos para el avatar en el toolbar
 .toolbar-avatar {
   width: 32px;
@@ -19,6 +27,10 @@
 
 // Responsive design
 @media (max-width: 576px) {
+  .header-logo {
+    height: 28px;
+  }
+  
   .toolbar-avatar {
     width: 28px;
     height: 28px;

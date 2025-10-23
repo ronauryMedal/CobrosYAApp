@@ -44,34 +44,11 @@
   .logo-container {
     margin-bottom: 30px;
     
-    .logo {
+    .logo-image {
       width: 80px;
       height: 80px;
-      background: linear-gradient(135deg, #0089C6 0%, #00E4ED 100%);
-      border-radius: 16px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      box-shadow: 0 8px 25px rgba(0, 137, 198, 0.3);
-      
-      .logo-letter {
-        color: white;
-        font-family: 'Roboto Condensed', 'Avant Garde Gothic Std', sans-serif;
-        font-size: 36px;
-        font-weight: bold;
-        line-height: 1;
-      }
-      
-      .logo-dot {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        width: 8px;
-        height: 8px;
-        background: white;
-        border-radius: 50%;
-      }
+      object-fit: contain;
+      filter: drop-shadow(0 8px 25px rgba(0, 137, 198, 0.3));
     }
   }
   

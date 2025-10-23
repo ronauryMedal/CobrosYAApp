@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { 
   IonHeader, 
   IonToolbar, 
@@ -29,18 +29,48 @@ import { AuthService } from '../../services/auth';
     CommonModule
   ],
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy {
   @Input() title: string = '';
   @Input() showAvatar: boolean = true;
   
   currentUser: User | null = null;
+  private mutationObserver?: MutationObserver;
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private actionSheetCtrl: ActionSheetController
+    private actionSheetCtrl: ActionSheetController,
+    private cdr: ChangeDetectorRef
   ) {
     this.currentUser = this.authService.getCurrentUser();
+  }
+
+  ngOnInit() {
+    // Observar cambios en el tema
+    this.observeThemeChanges();
+  }
+
+  ngOnDestroy() {
+    if (this.mutationObserver) {
+      this.mutationObserver.disconnect();
+    }
+  }
+
+  private observeThemeChanges() {
+    this.mutationObserver = new MutationObserver(() => {
+      // Forzar detección de cambios
+      this.detectThemeChange();
+    });
+
+    this.mutationObserver.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+  }
+
+  private detectThemeChange() {
+    // Forzar actualización del componente
+    this.cdr.detectChanges();
   }
 
   // Obtener URL del avatar
@@ -102,6 +132,20 @@ export class HeaderComponent {
     });
 
     await actionSheet.present();
+  }
+
+  // Obtener la ruta del logo según el tema
+  getLogoPath(): string {
+    // Solo verificar la clase dark en el body (método principal de Ionic)
+    const isDarkMode = document.body.classList.contains('dark');
+    
+    console.log('Tema detectado:', { isDarkMode, bodyClasses: document.body.className });
+    
+    if (isDarkMode) {
+      return 'assets/images/logos/Logotipo Horizontal blanco.png';
+    } else {
+      return 'assets/images/logos/Logotipo Horizontal a color - Letra a color.png';
+    }
   }
 
   // Métodos de navegación

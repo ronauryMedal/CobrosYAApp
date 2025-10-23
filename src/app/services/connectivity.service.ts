@@ -97,16 +97,7 @@ export class ConnectivityService {
   private async showOfflineNotification() {
     const alert = document.createElement('ion-alert');
     alert.header = '📡 Sin conexión a internet';
-    alert.message = `
-      <div style="text-align: center; padding: 20px;">
-        <ion-icon name="wifi-outline" style="font-size: 48px; color: #ff6b35;"></ion-icon>
-        <p><strong>No hay conexión a internet</strong></p>
-        <p>Verifica tu conexión de red y vuelve a intentar.</p>
-        <p style="font-size: 0.9em; color: #666; margin-top: 10px;">
-          Algunas funciones pueden no estar disponibles.
-        </p>
-      </div>
-    `;
+    alert.message = 'No hay conexión a internet.\n\nVerifica tu conexión de red y vuelve a intentar.\n\nAlgunas funciones pueden no estar disponibles.';
     alert.cssClass = 'connectivity-alert offline';
     alert.buttons = [
       {
@@ -128,16 +119,7 @@ export class ConnectivityService {
   private async showServerUnreachableNotification() {
     const alert = document.createElement('ion-alert');
     alert.header = '🔧 Servicio temporalmente no disponible';
-    alert.message = `
-      <div style="text-align: center; padding: 20px;">
-        <ion-icon name="server-outline" style="font-size: 48px; color: #ff6b35;"></ion-icon>
-        <p><strong>El servidor no está disponible en este momento</strong></p>
-        <p>Estamos trabajando para resolver el problema.</p>
-        <p style="font-size: 0.9em; color: #666; margin-top: 10px;">
-          Puedes seguir usando la aplicación en modo offline.
-        </p>
-      </div>
-    `;
+    alert.message = 'El servidor no está disponible en este momento.\n\nEstamos trabajando para resolver el problema.\n\nPuedes seguir usando la aplicación en modo offline.';
     alert.cssClass = 'connectivity-alert server-unreachable';
     alert.buttons = [
       {
@@ -159,13 +141,7 @@ export class ConnectivityService {
   private async showBackOnlineNotification() {
     const alert = document.createElement('ion-alert');
     alert.header = '✅ Conexión restaurada';
-    alert.message = `
-      <div style="text-align: center; padding: 20px;">
-        <ion-icon name="checkmark-circle-outline" style="font-size: 48px; color: #28a745;"></ion-icon>
-        <p><strong>¡Conexión restaurada!</strong></p>
-        <p>Todas las funciones están disponibles nuevamente.</p>
-      </div>
-    `;
+    alert.message = '¡Conexión restaurada!\n\nTodas las funciones están disponibles nuevamente.';
     alert.cssClass = 'connectivity-alert back-online';
     alert.buttons = [
       {
@@ -182,16 +158,7 @@ export class ConnectivityService {
   async showOperationError(operation: string, error?: any): Promise<void> {
     const alert = document.createElement('ion-alert');
     alert.header = '😔 Algo salió mal';
-    alert.message = `
-      <div style="text-align: center; padding: 20px;">
-        <ion-icon name="sad-outline" style="font-size: 48px; color: #ff6b35;"></ion-icon>
-        <p><strong>No pudimos completar la operación</strong></p>
-        <p>${operation}</p>
-        <p style="font-size: 0.9em; color: #666; margin-top: 10px;">
-          No te preocupes, puedes intentarlo más tarde.
-        </p>
-      </div>
-    `;
+    alert.message = `No pudimos completar la operación\n\n${operation}\n\nNo te preocupes, puedes intentarlo más tarde.`;
     alert.cssClass = 'connectivity-alert operation-error';
     alert.buttons = [
       {

@@ -24,13 +24,7 @@ export class SessionService {
 
     const alert = document.createElement('ion-alert');
     alert.header = '⚠️ Sesión por expirar';
-    alert.message = `
-      <div style="text-align: center; padding: 20px;">
-        <ion-icon name="time-outline" style="font-size: 48px; color: #ff6b35;"></ion-icon>
-        <p><strong>Tu sesión expirará en ${minutes} minutos</strong></p>
-        <p>Por favor, confirma que deseas continuar con la sesión activa.</p>
-      </div>
-    `;
+    alert.message = `Tu sesión expirará en ${minutes} minutos.\n\nPor favor, confirma que deseas continuar con la sesión activa.`;
     alert.cssClass = 'session-warning-alert';
     alert.buttons = [
       {
@@ -76,13 +70,7 @@ export class SessionService {
   async showSessionExpired(): Promise<void> {
     const alert = document.createElement('ion-alert');
     alert.header = '🕐 Sesión expirada';
-    alert.message = `
-      <div style="text-align: center; padding: 20px;">
-        <ion-icon name="lock-closed-outline" style="font-size: 48px; color: #ff6b35;"></ion-icon>
-        <p><strong>Tu sesión ha expirado por inactividad</strong></p>
-        <p>Serás redirigido a la página de inicio de sesión.</p>
-      </div>
-    `;
+    alert.message = 'Tu sesión ha expirado por inactividad.\n\nSerás redirigido a la página de inicio de sesión.';
     alert.cssClass = 'session-expired-alert';
     alert.buttons = [
       {

@@ -164,20 +164,27 @@ export class Tab2Page implements OnInit {
 
   // Calcular total de adelantos activos
   getTotalAdelantosActivos(): number {
-    return this.getAdelantosActivos().reduce((sum, adelanto) => 
-      sum + adelanto.monto_solicitado, 0
-    );
+    return this.getAdelantosActivos().reduce((sum, adelanto) => {
+      const monto = adelanto.monto_solicitado || 0;
+      return sum + (isNaN(monto) ? 0 : monto);
+    }, 0);
   }
 
   // Calcular total de monto restante
   getTotalMontoRestante(): number {
-    return this.adelantos.reduce((sum, adelanto) => 
-      sum + adelanto.monto_restante, 0
-    );
+    return this.adelantos.reduce((sum, adelanto) => {
+      const monto = adelanto.monto_restante || 0;
+      return sum + (isNaN(monto) ? 0 : monto);
+    }, 0);
   }
 
   // Formatear moneda
   formatearMoneda(monto: number): string {
+    // Verificar si el monto es válido
+    if (monto === null || monto === undefined || isNaN(monto)) {
+      return 'RD$0';
+    }
+    
     return new Intl.NumberFormat('es-DO', {
       style: 'currency',
       currency: 'DOP',

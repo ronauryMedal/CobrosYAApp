@@ -238,6 +238,27 @@ export class ApiService {
     });
   }
 
+  // Método para cambiar contraseña
+  cambiarPassword(passwordActual: string, passwordNuevo: string): Observable<ApiResponse<any>> {
+    console.log('Enviando solicitud de cambio de contraseña...');
+    
+    const body = {
+      password_actual: passwordActual,
+      password_nuevo: passwordNuevo,
+      password_nuevo_confirmation: passwordNuevo
+    };
+    
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/empleado/cambiar-password`, body, { 
+      headers: this.getHeaders() 
+    }).pipe(
+      map(response => {
+        console.log('Cambio de contraseña exitoso:', response);
+        return response;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
   // Métodos de utilidad
   setToken(token: string) {
     this.token = token;
