@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ConnectivityService } from './connectivity.service';
+import { environment } from '../../environments/environment';
 
 export interface LoginRequest {
   cedula: string;
@@ -128,7 +129,7 @@ export interface HistorialPago {
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:8000/api';
+  private baseUrl = environment.apiUrl;
   private token: string = '';
 
   constructor(
