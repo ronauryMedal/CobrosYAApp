@@ -70,9 +70,10 @@ export class AuthService {
     
     try {
       await sessionService.showSessionExpired();
+      // No llamar logout aquí porque el modal ya lo maneja
     } catch (error) {
       console.error('Error al mostrar alerta de sesión expirada:', error);
-    } finally {
+      // Solo hacer logout si hay error al mostrar el modal
       this.logout();
     }
   }
@@ -260,7 +261,12 @@ export class AuthService {
     localStorage.removeItem('cedulaGuardada');
     
     // Redirigir al login
-    this.router.navigate(['/login']);
+    console.log('AuthService: Redirigiendo al login...');
+    this.router.navigate(['/login']).then(() => {
+      console.log('AuthService: Redirección al login completada');
+    }).catch((error) => {
+      console.error('AuthService: Error en redirección al login:', error);
+    });
   }
 
   // Verificar si el usuario puede acceder a una ruta

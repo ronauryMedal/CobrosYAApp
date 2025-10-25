@@ -2,14 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { 
   IonContent, 
-  IonCard, 
-  IonCardContent, 
-  IonItem, 
-  IonLabel, 
   IonInput, 
   IonButton, 
   IonIcon, 
-  IonNote, 
   IonCheckbox, 
   IonSpinner 
 } from '@ionic/angular/standalone';
@@ -25,14 +20,9 @@ import { OnboardingUtils } from '../utils/onboarding-utils';
   styleUrls: ['login.page.scss'],
   imports: [
     IonContent, 
-    IonCard, 
-    IonCardContent, 
-    IonItem, 
-    IonLabel, 
     IonInput, 
     IonButton, 
     IonIcon, 
-    IonNote, 
     IonCheckbox, 
     IonSpinner,
     ReactiveFormsModule,
@@ -102,6 +92,10 @@ export class LoginPage implements OnInit {
     window.location.reload();
   }
 
+  goToForgotPassword() {
+    this.router.navigate(['/forgot-password']);
+  }
+
   async login() {
     console.log('Iniciando login...');
     if (this.loginForm.valid) {
@@ -158,16 +152,10 @@ export class LoginPage implements OnInit {
     }
   }
 
-  // Obtener la ruta del logo según el tema
+  // Obtener la ruta del logo
   getLogoPath(): string {
-    // Solo verificar la clase dark en el body (método principal de Ionic)
-    const isDarkMode = document.body.classList.contains('dark');
-    
-    if (isDarkMode) {
-      return 'assets/images/logos/Isotipo blanco.png';
-    } else {
-      return 'assets/images/logos/Isotipo a color.png';
-    }
+    // Usar el logotipo horizontal a color con letra blanca
+    return 'assets/images/logos/Logotipo Horizontal a color - Letra blanca.png';
   }
 
   // Cargar cédula guardada si existe

@@ -39,6 +39,20 @@ export interface LoginResponse {
   };
 }
 
+export interface ForgotPasswordRequest {
+  email?: string;
+  cedula?: string;
+}
+
+export interface ForgotPasswordResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    email: string;
+    temporary_password: string;
+  };
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   message?: string;
@@ -143,6 +157,19 @@ export class ApiService {
   logout(): Observable<any> {
     return this.http.post(`${this.baseUrl}/logout`, {}, { headers: this.getHeaders() })
       .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  // Método para olvidé mi contraseña
+  forgotPassword(request: ForgotPasswordRequest): Observable<ForgotPasswordResponse> {
+    console.log('Enviando solicitud de forgot password:', request);
+    return this.http.post<ForgotPasswordResponse>(`${this.baseUrl}/forgot-password`, request)
+      .pipe(
+        map(response => {
+          console.log('Respuesta del forgot password:', response);
+          return response;
+        }),
         catchError(this.handleError)
       );
   }

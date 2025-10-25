@@ -76,6 +76,7 @@ export class SessionService {
       {
         text: 'Entendido',
         handler: () => {
+          console.log('Usuario aceptó que la sesión expiró, haciendo logout...');
           this.authService.logout();
         }
       }
@@ -83,6 +84,15 @@ export class SessionService {
 
     document.body.appendChild(alert);
     await alert.present();
+    
+    // Asegurar que el alert se cierre después de un tiempo si el usuario no responde
+    setTimeout(() => {
+      if (alert.isConnected) {
+        console.log('Forzando cierre del alert de sesión expirada...');
+        alert.dismiss();
+        this.authService.logout();
+      }
+    }, 10000); // 10 segundos de timeout
   }
 
   /**

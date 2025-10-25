@@ -26,6 +26,10 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'forgot-password',
+    loadComponent: () => import('./forgot-password/forgot-password.page').then( m => m.ForgotPasswordPage)
+  },
+  {
     path: '**',
     redirectTo: '/login'
   }
