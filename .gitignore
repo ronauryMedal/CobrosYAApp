@@ -68,3 +68,31 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Large files and media
+*.pdf
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.zip
+*.rar
+*.7z
+*.tar.gz
+*.tar.bz2
+
+# Documents and media
+*.doc
+*.docx
+*.ppt
+*.pptx
+*.xls
+*.xlsx
+*.psd
+*.ai
+*.indd
+
+# Backup files
+*.bak
+*.backup
+*.old
